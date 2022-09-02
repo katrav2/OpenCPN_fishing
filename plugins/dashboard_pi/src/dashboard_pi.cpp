@@ -2224,7 +2224,7 @@ void DashboardWindow::OnContextMenuSelect( wxCommandEvent& event )
             m_Container->m_sOrientation = _T("H");
             break;
         }
-    }
+    }		
     m_plugin->SaveConfig();
 }
 
@@ -2234,7 +2234,7 @@ void DashboardWindow::SetColorScheme( PI_ColorScheme cs )
     
     //  Improve appearance, especially in DUSK or NIGHT palette
     wxColour col;
-    GetGlobalColor( _T("DASHL"), &col );
+    GetGlobalColor( _T("DASHB"), &col );
     SetBackgroundColour( col );
     
     Refresh( false );

@@ -352,6 +352,7 @@ extern int              g_route_line_width;
 extern int              g_track_line_width;
 extern wxColour         g_colourTrackLineColour;
 extern wxString         g_default_wp_icon;
+extern int				g_last_fishing_mark_number;
 
 extern ChartGroupArray  *g_pGroupArray;
 extern int              g_GroupIndex;
@@ -472,10 +473,10 @@ void MyConfig::CreateRotatingNavObjBackup()
 {
 
     // Avoid nonsense log errors...
-#ifdef __OCPN__ANDROID__    
+#ifdef __OCPN__ANDROID__
     wxLogNull logNo;
-#endif    
-    
+#endif
+
     //Rotate navobj backups, but just in case there are some changes in the current version
     //to prevent the user trying to "fix" the problem by continuously starting the
     //application to overwrite all of his good backups...
@@ -534,28 +535,28 @@ int MyConfig::LoadMyConfig()
     wxDisplaySize( &display_width, &display_height );
 
 //    Global options and settings
-    SetPath( _T ( "/Settings" ) );    
-    
+    SetPath( _T ( "/Settings" ) );
+
     // Some undocumented values
     Read( _T ( "ConfigVersionString" ), &g_config_version_string, _T("") );
     Read( _T ( "NavMessageShown" ), &n_NavMessageShown, 0 );
 
     Read( _T ( "UIexpert" ), &g_bUIexpert, 1 );
-    
+
     Read( _T ( "UIStyle" ), &g_uiStyle, wxT("Traditional") );
 
     Read( _T ( "NCacheLimit" ), &g_nCacheLimit, 0 );
-     
+
     Read( _T ( "InlandEcdis" ), &g_bInlandEcdis, 0 );// First read if in iENC mode as this will override some config settings
 
     Read( _T( "SpaceDropMark" ), &g_bSpaceDropMark, 0 );
     int mem_limit;
     Read( _T ( "MEMCacheLimit" ), &mem_limit, 0 );
-    
+
     if(mem_limit > 0)
         g_memCacheLimit = mem_limit * 1024;       // convert from MBytes to kBytes
 
-    Read( _T( "NCPUCount" ), &g_nCPUCount, -1);    
+    Read( _T( "NCPUCount" ), &g_nCPUCount, -1);
 
     Read( _T ( "DebugGDAL" ), &g_bGDAL_Debug, 0 );
     Read( _T ( "DebugNMEA" ), &g_nNMEADebug, 0 );
@@ -569,7 +570,7 @@ int MyConfig::LoadMyConfig()
     Read( _T ( "DebugGPSD" ), &g_bDebugGPSD, 0 );
 
     Read( _T ( "DefaultFontSize"), &g_default_font_size, 0 );
-    
+
     Read( _T ( "UseGreenShipIcon" ), &g_bUseGreenShip, 0 );
     g_b_overzoom_x = true;
     Read( _T ( "AutosaveIntervalSeconds" ), &g_nautosave_interval_seconds, 300 );
@@ -583,11 +584,11 @@ int MyConfig::LoadMyConfig()
 
     Read( _T ( "AutoHideToolbar" ), &g_bAutoHideToolbar, 0 );
     Read( _T ( "AutoHideToolbarSecs" ), &g_nAutoHideToolbar, 0 );
-    
+
     Read( _T ( "UseSimplifiedScalebar" ), &g_bsimplifiedScalebar, 0 );
     Read( _T ( "ShowTide" ), &g_bShowTide, 0 );
     Read( _T ( "ShowCurrent" ), &g_bShowCurrent, 0 );
-    
+
     int size_mm;
     Read( _T ( "DisplaySizeMM" ), &size_mm, -1 );
     g_config_display_size_mm = size_mm;
@@ -595,13 +596,13 @@ int MyConfig::LoadMyConfig()
         g_display_size_mm = size_mm;
     }
     Read( _T ( "DisplaySizeManual" ), &g_config_display_size_manual, 0 );
-    
+
     Read( _T ( "GUIScaleFactor" ), &g_GUIScaleFactor, 0 );
     Read( _T ( "ChartObjectScaleFactor" ), &g_ChartScaleFactor, 0 );
     g_ChartScaleFactorExp = g_Platform->getChartScaleFactorExp( g_ChartScaleFactor );
     Read( _T ( "ShipScaleFactor" ), &g_ShipScaleFactor, 0 );
     g_ShipScaleFactorExp = g_Platform->getChartScaleFactorExp( g_ShipScaleFactor );
-    
+
     Read( _T ( "FilterNMEA_Avg" ), &g_bfilter_cogsog, 0 );
     Read( _T ( "FilterNMEA_Sec" ), &g_COGFilterSec, 1 );
     g_COGFilterSec = wxMin(g_COGFilterSec, MAX_COGSOG_FILTER_SECONDS);
@@ -646,13 +647,13 @@ int MyConfig::LoadMyConfig()
     if ( g_bdisable_opengl )
         g_bopengl = false;
     Read( _T ( "SoftwareGL" ), &g_bSoftwareGL, 0 );
-    
+
     Read( _T ( "ShowFPS" ), &g_bShowFPS, 0 );
-    
+
     Read( _T ( "ActiveChartGroup" ), &g_GroupIndex, 0 );
 
     Read( _T( "NMEAAPBPrecision" ), &g_NMEAAPBPrecision, 3 );
-    
+
     Read( _T( "TalkerIdText" ), &g_TalkerIdText, _T("EC") );
     Read( _T( "MaxWaypointNameLength" ), &g_maxWPNameLength, 6 );
 
@@ -683,10 +684,10 @@ int MyConfig::LoadMyConfig()
 
     Read( _T ( "iENCToolbarX"), &g_iENCToolbarPosX, -1 );
     Read( _T ( "iENCToolbarY"), &g_iENCToolbarPosY, -1 );
-    
+
     Read( _T ( "iENCToolbarX"), &g_iENCToolbarPosX, -1 );
     Read( _T ( "iENCToolbarY"), &g_iENCToolbarPosY, -1 );
-    
+
     Read( _T ( "AnchorWatch1GUID" ), &g_AW1GUID, _T("") );
     Read( _T ( "AnchorWatch2GUID" ), &g_AW2GUID, _T("") );
 
@@ -705,11 +706,11 @@ int MyConfig::LoadMyConfig()
     Read( _T ( "ZoomDetailFactorVector" ), &g_chart_zoom_modifier_vector, 0 );
     g_chart_zoom_modifier_vector = wxMin(g_chart_zoom_modifier_vector,5);
     g_chart_zoom_modifier_vector = wxMax(g_chart_zoom_modifier_vector,-5);
-    
+
     Read( _T ( "FogOnOverzoom" ), &g_fog_overzoom, 1 );
     Read( _T ( "OverzoomVectorScale" ), &g_oz_vector_scale, 1 );
     Read( _T ( "OverzoomEmphasisBase" ), &g_overzoom_emphasis_base, 10.0 );
-    
+
 #ifdef USE_S57
     Read( _T ( "CM93DetailFactor" ), &g_cm93_zoom_factor, 0 );
     g_cm93_zoom_factor = wxMin(g_cm93_zoom_factor,CM93_ZOOM_FACTOR_MAX_RANGE);
@@ -752,7 +753,7 @@ int MyConfig::LoadMyConfig()
     Read( _T ( "MostRecentGPSUploadConnection" ), &g_uploadConnection, _T("") );
     Read( _T ( "ShowChartBar" ), &g_bShowChartBar, 1 );
     Read( _T ( "SDMMFormat" ), &g_iSDMMFormat, 0 ); //0 = "Degrees, Decimal minutes"), 1 = "Decimal degrees", 2 = "Degrees,Minutes, Seconds"
-      
+
     Read( _T ( "DistanceFormat" ), &g_iDistanceFormat, 0 ); //0 = "Nautical miles"), 1 = "Statute miles", 2 = "Kilometers", 3 = "Meters"
     Read( _T ( "SpeedFormat" ), &g_iSpeedFormat, 0 ); //0 = "kts"), 1 = "mph", 2 = "km/h", 3 = "m/s"
 
@@ -761,7 +762,7 @@ int MyConfig::LoadMyConfig()
     Read( _T ( "DefaultBoatSpeed" ), &g_defaultBoatSpeed, 6.0 );
     // Calculate user selected speed unit
     g_defaultBoatSpeedUserUnit = toUsrSpeed(g_defaultBoatSpeed, -1);
-    
+
     Read( _T ( "OwnshipCOGPredictorMinutes" ), &g_ownship_predictor_minutes, 5 );
     Read( _T ( "OwnshipCOGPredictorWidth" ), &g_cog_predictor_width, 3 );
     Read( _T ( "OwnshipHDTPredictorMiles" ), &g_ownship_HDTpredictor_miles, 1 );
@@ -803,7 +804,7 @@ int MyConfig::LoadMyConfig()
     g_locale = _T("en_US");
     Read( _T ( "Locale" ), &g_locale );
     Read( _T ( "LocaleOverride" ), &g_localeOverride );
-    
+
     //We allow 0-99 backups ov navobj.xml
     Read( _T ( "KeepNavobjBackups" ), &g_navobjbackups, 5 );
     if( g_navobjbackups > 99 ) g_navobjbackups = 99;
@@ -815,18 +816,18 @@ int MyConfig::LoadMyConfig()
 
     // Boolean to cater for legacy Input COM Port filer behaviour, i.e. show msg filtered but put msg on bus.
     Read( _T ( "LegacyInputCOMPortFilterBehaviour" ), &g_b_legacy_input_filter_behaviour, 0 );
-    
+
     // Boolean to cater for sailing when not approaching waypoint
     Read( _T( "AdvanceRouteWaypointOnArrivalOnly" ), &g_bAdvanceRouteWaypointOnArrivalOnly, 0);
 
     Read( _T ( "EnableRotateKeys" ),  &g_benable_rotate );
     Read( _T ( "EmailCrashReport" ),  &g_bEmailCrashReport );
-    
+
     g_benableAISNameCache = true;
     Read( _T ( "EnableAISNameCache" ),  &g_benableAISNameCache );
-    
+
     Read( _T ( "EnableUDPNullHeader" ),  &g_benableUDPNullHeader, 0 );
-    
+
     SetPath( _T ( "/Settings/GlobalState" ) );
     Read( _T ( "bFollow" ), &st_bFollow );
 
@@ -840,12 +841,12 @@ int MyConfig::LoadMyConfig()
     Read( _T ( "ClientPosY" ), &g_lastClientRecty, 0 );
     Read( _T ( "ClientSzX" ), &g_lastClientRectw, 0 );
     Read( _T ( "ClientSzY" ), &g_lastClientRecth, 0 );
-    
+
     Read( _T ( "S52_DEPTH_UNIT_SHOW" ), &read_int, 1 );   // default is metres
     read_int = wxMax(read_int, 0);                      // qualify value
     read_int = wxMin(read_int, 2);
     g_nDepthUnitDisplay = read_int;
-    
+
     //    AIS
     wxString s;
     SetPath( _T ( "/Settings/AIS" ) );
@@ -892,7 +893,7 @@ int MyConfig::LoadMyConfig()
     Read( _T ( "bHideMooredTargets" ), &g_bHideMoored, false );
     Read( _T ( "MooredTargetMaxSpeedKnots" ), &s );
     s.ToDouble( &g_ShowMoored_Kts );
-    
+
     Read(_T ("bShowScaledTargets"), &g_bAllowShowScaled, false );
     g_ShowScaled_Num = Read( _T ( "AISScaledNumber" ), 10L );
     g_ScaledNumWeightSOG = Read( _T ( "AISScaledNumberWeightSOG" ), 50L );
@@ -902,7 +903,7 @@ int MyConfig::LoadMyConfig()
     g_ScaledNumWeightSizeOfT = Read( _T ( "AISScaledNumberWeightSizeOfTarget" ), 25L );
     g_ScaledSizeMinimal = Read( _T ( "AISScaledSizeMinimal" ), 50L );
     Read(_T("AISShowScaled"), &g_bShowScaled, false );
-    
+
     Read( _T ( "bShowAreaNotices" ), &g_bShowAreaNotices );
     Read( _T ( "bDrawAISSize" ), &g_bDrawAISSize );
     Read( _T ( "bShowAISName" ), &g_bShowAISName );
@@ -949,7 +950,7 @@ int MyConfig::LoadMyConfig()
 
     Read( _T ( "S57QueryDialogSizeX" ), &g_S57_dialog_sx, 400 );
     Read( _T ( "S57QueryDialogSizeY" ), &g_S57_dialog_sy, 400 );
-    
+
 
     wxString strpres( _T ( "PresentationLibraryData" ) );
     wxString valpres;
@@ -968,7 +969,7 @@ int MyConfig::LoadMyConfig()
 #endif
 
     SwitchInlandEcdisMode( g_bInlandEcdis );
-    
+
     SetPath( _T ( "/Directories" ) );
     wxString vald;
     Read( _T ( "InitChartDir" ), &vald );           // Get the Directory name
@@ -987,7 +988,7 @@ int MyConfig::LoadMyConfig()
     Read( _T ( "BasemapDir"), &gWorldMapLocation );
 
     SetPath( _T ( "/Settings/GlobalState" ) );
-    
+
     if ( g_bInlandEcdis ) global_color_scheme = GLOBAL_COLOR_SCHEME_DUSK; //startup in duskmode if inlandEcdis
     else{
         Read( _T ( "nColorScheme" ), &read_int, 0 );
@@ -1208,10 +1209,10 @@ int MyConfig::LoadMyConfig()
     wxLogMessage( s );
 
 //    Fonts
-    
+
     //  Load the persistent Auxiliary Font descriptor Keys
     SetPath ( _T ( "/Settings/AuxFontKeys" ) );
-    
+
     wxString strk;
     long dummyk;
     wxString kval;
@@ -1226,7 +1227,7 @@ int MyConfig::LoadMyConfig()
         }
         bContk = GetNextEntry( strk, dummyk );
     }
-        
+
 #ifdef __WXX11__
     SetPath ( _T ( "/Settings/X11Fonts" ) );
 #endif
@@ -1246,7 +1247,7 @@ int MyConfig::LoadMyConfig()
 #ifdef __WXQT__
     SetPath ( _T ( "/Settings/QTFonts" ) );
 #endif
-    
+
     wxString str;
     long dummy;
     wxString *pval = new wxString;
@@ -1325,7 +1326,7 @@ int MyConfig::LoadMyConfig()
     wxString l_wxsOwnshipRangeRingsColour;
     Read( _T ( "RadarRingsColour" ), &l_wxsOwnshipRangeRingsColour );
     if(l_wxsOwnshipRangeRingsColour.Length()) g_colourOwnshipRangeRingsColour.Set( l_wxsOwnshipRangeRingsColour );
-    
+
     // Waypoint Radar rings
     g_iWaypointRangeRingsNumber = 0;
     Read( _T ( "WaypointRangeRingsNumber" ), &val );
@@ -1337,7 +1338,7 @@ int MyConfig::LoadMyConfig()
 
     g_iWaypointRangeRingsStepUnits = 0;
     Read( _T ( "WaypointRangeRingsStepUnits" ), &g_iWaypointRangeRingsStepUnits );
-    
+
     g_colourWaypointRangeRingsColour = wxColour( *wxRED );
     wxString l_wxsWaypointRangeRingsColour;
     Read( _T( "WaypointRangeRingsColour" ), &l_wxsWaypointRangeRingsColour );
@@ -1389,6 +1390,7 @@ int MyConfig::LoadMyConfig()
     Read( _T ( "TideRectangleScale" ), &g_tide_rectangle_scale, 100 );
     Read( _T ( "TideCurrentWindowScale" ), &g_tcwin_scale, 100 );
     Read( _T ( "DefaultWPIcon" ), &g_default_wp_icon, _T("triangle") );
+    Read( _T ( "LastFishingMarkNumer"), &g_last_fishing_mark_number, 0);
 
     SetPath( _T ( "/MMSIProperties" ) );
     int iPMax = GetNumberOfEntries();
@@ -1560,15 +1562,15 @@ void MyConfig::LoadNavObjects()
         //  If it does fault, at least the next restart will proceed without fault.
         if( ::wxFileExists( m_sNavObjSetChangesFile ) )
             ::wxRemoveFile( m_sNavObjSetChangesFile );
-        
+
         if(size != 0){
             wxLogMessage( _T("Applying NavObjChanges") );
             pNavObjectChangesSet->ApplyChanges();
             UpdateNavObj();
         }
-        
+
         delete pNavObjectChangesSet;
-           
+
     }
 
     m_pNavObjectChangesSet = new NavObjectChanges(m_sNavObjSetChangesFile);
@@ -1902,14 +1904,14 @@ void MyConfig::LoadConfigGroups( ChartGroupArray *pGroupArray )
 void MyConfig::UpdateSettings()
 {
     //  Temporarily suppress logging of trivial non-fatal wxLogSysError() messages provoked by Android security...
-#ifdef __OCPN__ANDROID__    
+#ifdef __OCPN__ANDROID__
     wxLogNull logNo;
-#endif    
-    
-    
+#endif
+
+
 //    Global options and settings
     SetPath( _T ( "/Settings" ) );
-    
+
     Write( _T ( "ConfigVersionString" ), g_config_version_string );
     Write( _T ( "NavMessageShown" ), n_NavMessageShown );
     Write( _T ( "InlandEcdis" ), g_bInlandEcdis );
@@ -1923,7 +1925,7 @@ void MyConfig::UpdateSettings()
     Write( _T ( "ShowMenuBar" ), m_bShowMenuBar );
 #endif
     Write( _T ( "DefaultFontSize" ), g_default_font_size );
-    
+
     Write( _T ( "Fullscreen" ), g_bFullscreen );
     Write( _T ( "ShowCompassWindow" ), m_bShowCompassWin );
     Write( _T ( "SetSystemTime" ), s_bSetSystemTime );
@@ -1941,11 +1943,11 @@ void MyConfig::UpdateSettings()
     Write( _T ( "SDMMFormat" ), g_iSDMMFormat );
     Write( _T ( "MostRecentGPSUploadConnection" ), g_uploadConnection );
     Write( _T ( "ShowChartBar" ), g_bShowChartBar );
-    
+
     Write( _T ( "GUIScaleFactor" ), g_GUIScaleFactor );
     Write( _T ( "ChartObjectScaleFactor" ), g_ChartScaleFactor );
     Write( _T ( "ShipScaleFactor" ), g_ShipScaleFactor );
-    
+
     Write( _T ( "FilterNMEA_Avg" ), g_bfilter_cogsog );
     Write( _T ( "FilterNMEA_Sec" ), g_COGFilterSec );
 
@@ -1962,10 +1964,10 @@ void MyConfig::UpdateSettings()
     Write( _T ( "OpenGL" ), g_bopengl );
     Write( _T ( "SoftwareGL" ), g_bSoftwareGL );
     Write( _T ( "ShowFPS" ), g_bShowFPS );
-    
+
     Write( _T ( "ZoomDetailFactor" ), g_chart_zoom_modifier );
     Write( _T ( "ZoomDetailFactorVector" ), g_chart_zoom_modifier_vector );
-    
+
     Write( _T ( "FogOnOverzoom" ), g_fog_overzoom );
     Write( _T ( "OverzoomVectorScale" ), g_oz_vector_scale );
     Write( _T ( "OverzoomEmphasisBase" ), g_overzoom_emphasis_base );
@@ -2035,7 +2037,7 @@ void MyConfig::UpdateSettings()
     Write( _T ( "ActiveChartGroup" ), g_GroupIndex );
 
     Write( _T( "NMEAAPBPrecision" ), g_NMEAAPBPrecision );
-    
+
     Write( _T("TalkerIdText"), g_TalkerIdText );
 
     Write( _T ( "AnchorWatch1GUID" ), g_AW1GUID );
@@ -2047,8 +2049,8 @@ void MyConfig::UpdateSettings()
 
     Write( _T ( "iENCToolbarX" ), g_iENCToolbarPosX );
     Write( _T ( "iENCToolbarY" ), g_iENCToolbarPosY );
-    
-    if ( !g_bInlandEcdis ){  
+
+    if ( !g_bInlandEcdis ){
         Write( _T ( "ToolbarConfig" ), g_toolbarConfig );
         Write( _T ( "DistanceFormat" ), g_iDistanceFormat );
         Write( _T ( "SpeedFormat" ), g_iSpeedFormat );
@@ -2062,10 +2064,10 @@ void MyConfig::UpdateSettings()
 
     Write( _T ( "AutoHideToolbar" ), g_bAutoHideToolbar );
     Write( _T ( "AutoHideToolbarSecs" ), g_nAutoHideToolbar );
-    
+
     Write( _T ( "DisplaySizeMM" ), g_config_display_size_mm );
     Write( _T ( "DisplaySizeManual" ), g_config_display_size_manual );
-    
+
     wxString st0;
     st0.Printf( _T ( "%g" ), g_PlanSpeed );
     Write( _T ( "PlanSpeed" ), st0 );
@@ -2084,15 +2086,15 @@ void MyConfig::UpdateSettings()
 
     Write( _T ( "Locale" ), g_locale );
     Write( _T ( "LocaleOverride" ), g_localeOverride );
-    
+
     Write( _T ( "KeepNavobjBackups" ), g_navobjbackups );
     Write( _T ( "LegacyInputCOMPortFilterBehaviour" ), g_b_legacy_input_filter_behaviour );
     Write( _T( "AdvanceRouteWaypointOnArrivalOnly" ), g_bAdvanceRouteWaypointOnArrivalOnly);
-    
+
     // LIVE ETA OPTION
     Write( _T( "LiveETA" ), g_bShowLiveETA);
     Write( _T( "DefaultBoatSpeed" ), g_defaultBoatSpeed);
-    
+
 //    S57 Object Filter Settings
 
     SetPath( _T ( "/Settings/ObjectFilter" ) );
@@ -2149,9 +2151,9 @@ void MyConfig::UpdateSettings()
     Write( _T ( "ClientPosY" ), g_lastClientRecty );
     Write( _T ( "ClientSzX" ), g_lastClientRectw );
     Write( _T ( "ClientSzY" ), g_lastClientRecth );
-    
+
     Write( _T ( "S52_DEPTH_UNIT_SHOW" ), g_nDepthUnitDisplay );
-    
+
 
     //    AIS
     SetPath( _T ( "/Settings/AIS" ) );
@@ -2173,7 +2175,7 @@ void MyConfig::UpdateSettings()
 
     Write( _T ( "bHideMooredTargets" ), g_bHideMoored );
     Write( _T ( "MooredTargetMaxSpeedKnots" ), g_ShowMoored_Kts );
-    
+
     Write( _T ( "bAISAlertDialog" ), g_bAIS_CPA_Alert );
     Write( _T ( "bAISAlertAudio" ), g_bAIS_CPA_Alert_Audio );
     Write( _T ( "AISAlertAudioFile" ), g_sAIS_Alert_Sound_File );
@@ -2185,12 +2187,12 @@ void MyConfig::UpdateSettings()
     Write( _T ( "bWplIsAprsPositionReport" ), g_bWplIsAprsPosition );
     Write( _T ( "AISCOGPredictorWidth" ), g_ais_cog_predictor_width );
     Write( _T ( "bShowScaledTargets" ), g_bAllowShowScaled );
-    Write( _T ( "AISScaledNumber" ), g_ShowScaled_Num );    
+    Write( _T ( "AISScaledNumber" ), g_ShowScaled_Num );
     Write( _T ( "AISScaledNumberWeightSOG" ), g_ScaledNumWeightSOG );
     Write( _T ( "AISScaledNumberWeightCPA" ), g_ScaledNumWeightCPA );
     Write( _T ( "AISScaledNumberWeightTCPA" ), g_ScaledNumWeightTCPA );
     Write( _T ( "AISScaledNumberWeightRange" ), g_ScaledNumWeightRange );
-    Write( _T ( "AISScaledNumberWeightSizeOfTarget" ), g_ScaledNumWeightSizeOfT ); 
+    Write( _T ( "AISScaledNumberWeightSizeOfTarget" ), g_ScaledNumWeightSizeOfT );
     Write( _T ( "AISScaledSizeMinimal" ), g_ScaledSizeMinimal );
     Write( _T ( "AISShowScaled"), g_bShowScaled);
 
@@ -2263,10 +2265,10 @@ void MyConfig::UpdateSettings()
     Write ( _T ( "DataConnections" ), connectionconfigs );
 
     //    Fonts
-    
+
     //  Store the persistent Auxiliary Font descriptor Keys
     SetPath( _T ( "/Settings/AuxFontKeys" ) );
-    
+
     wxArrayString keyArray = FontMgr::Get().GetAuxKeyArray();
     for(unsigned int i=0 ; i <  keyArray.GetCount() ; i++){
         wxString key;
@@ -2274,7 +2276,7 @@ void MyConfig::UpdateSettings()
         wxString keyval = keyArray[i];
         Write( key, keyval );
     }
-    
+
     wxString font_path;
 #ifdef __WXX11__
     font_path = ( _T ( "/Settings/X11Fonts" ) );
@@ -2295,9 +2297,9 @@ void MyConfig::UpdateSettings()
 #ifdef __WXQT__
     font_path = ( _T ( "/Settings/QTFonts" ) );
 #endif
-    
+
     DeleteGroup(font_path);
-    
+
     SetPath( font_path );
 
     int nFonts = FontMgr::Get().GetNumFonts();
@@ -2326,7 +2328,7 @@ void MyConfig::UpdateSettings()
     Write( _T ( "RadarRingsStep" ), g_fNavAidRadarRingsStep );
     Write( _T ( "RadarRingsStepUnits" ), g_pNavAidRadarRingsStepUnits );
     Write( _T ( "RadarRingsColour" ), g_colourOwnshipRangeRingsColour.GetAsString( wxC2S_HTML_SYNTAX ) );
-    
+
     // Waypoint Radar rings
     Write( _T ( "WaypointRangeRingsNumber" ), g_iWaypointRangeRingsNumber );
     Write( _T ( "WaypointRangeRingsStep" ), g_fWaypointRangeRingsStep );
@@ -2351,6 +2353,7 @@ void MyConfig::UpdateSettings()
     Write( _T ( "TideRectangleScale" ), g_tide_rectangle_scale );
     Write( _T ( "TideCurrentWindowScale" ), g_tcwin_scale );
     Write( _T ( "DefaultWPIcon" ), g_default_wp_icon );
+    Write( _T ( "LastFishingMarkNumer"), g_last_fishing_mark_number );
 
     DeleteGroup(_T ( "/MMSIProperties" ));
     SetPath( _T ( "/MMSIProperties" ) );
@@ -2388,14 +2391,14 @@ void MyConfig::UpdateNavObj( void )
 bool MyConfig::ExportGPXRoutes( wxWindow* parent, RouteList *pRoutes, const wxString suggestedName )
 {
     wxString path;
-    
+
     int response = g_Platform->DoFileSelectorDialog( parent, &path,
                                                      _( "Export GPX file" ),
                                                      m_gpx_path,
                                                      suggestedName,
                                                      wxT ( "*.gpx" )
     );
-    
+
     if( response == wxID_OK ) {
         wxFileName fn(path);
         m_gpx_path = fn.GetPath();
@@ -2422,14 +2425,14 @@ bool MyConfig::ExportGPXRoutes( wxWindow* parent, RouteList *pRoutes, const wxSt
 bool MyConfig::ExportGPXTracks( wxWindow* parent, TrackList *pTracks, const wxString suggestedName )
 {
     wxString path;
-    
+
     int response = g_Platform->DoFileSelectorDialog( parent, &path,
                                                      _( "Export GPX file" ),
                                                      m_gpx_path,
                                                      suggestedName,
                                                      wxT ( "*.gpx" )
     );
-    
+
     if( response == wxID_OK ) {
         wxFileName fn(path);
         m_gpx_path = fn.GetPath();
@@ -2456,7 +2459,7 @@ bool MyConfig::ExportGPXTracks( wxWindow* parent, TrackList *pTracks, const wxSt
 bool MyConfig::ExportGPXWaypoints( wxWindow* parent, RoutePointList *pRoutePoints, const wxString suggestedName )
 {
     wxString path;
-    
+
     int response = g_Platform->DoFileSelectorDialog( parent, &path,
                                                      _( "Export GPX file" ),
                                                      m_gpx_path,
@@ -2491,17 +2494,17 @@ bool MyConfig::ExportGPXWaypoints( wxWindow* parent, RoutePointList *pRoutePoint
 void MyConfig::ExportGPX( wxWindow* parent, bool bviz_only, bool blayer )
 {
     wxString path;
-    
+
     int response = g_Platform->DoFileSelectorDialog( parent, &path,
                                                      _( "Export GPX file" ),
                                                      m_gpx_path,
                                                      _T("userobjects.gpx"),
                                                      wxT ( "*.gpx" )
     );
-    
-    
-    
-    
+
+
+
+
     if( response == wxID_OK ) {
         wxFileName fn(path);
         m_gpx_path = fn.GetPath();
@@ -2612,31 +2615,31 @@ void MyConfig::UI_ImportGPX( wxWindow* parent, bool islayer, wxString dirpath, b
     Layer *l = NULL;
 
     if( !islayer || dirpath.IsSameAs( _T("") ) ) {
-        
-        //  Platform DoFileSelectorDialog method does not properly handle multiple selections  
+
+        //  Platform DoFileSelectorDialog method does not properly handle multiple selections
         //  So use native method if not Android, which means Android gets single selection only.
-#ifndef __OCPN__ANDROID__        
+#ifndef __OCPN__ANDROID__
         wxFileDialog *popenDialog = new wxFileDialog( NULL, _( "Import GPX file" ), m_gpx_path, wxT ( "" ),
                 wxT ( "GPX files (*.gpx)|*.gpx|All files (*.*)|*.*" ),
                 wxFD_OPEN | wxFD_MULTIPLE );
 
         if(g_bresponsive && parent)
             popenDialog = g_Platform->AdjustFileDialogFont(parent, popenDialog);
-        
+
         popenDialog->Centre();
-        
+
         #ifdef __WXOSX__
         if(parent)
             parent->HideWithEffect(wxSHOW_EFFECT_BLEND );
         #endif
-            
+
         response = popenDialog->ShowModal();
-        
+
         #ifdef __WXOSX__
         if(parent)
             parent->ShowWithEffect(wxSHOW_EFFECT_BLEND );
         #endif
-            
+
         if( response == wxID_OK ) {
             popenDialog->GetPaths( file_array );
 
@@ -2655,13 +2658,13 @@ void MyConfig::UI_ImportGPX( wxWindow* parent, bool islayer, wxString dirpath, b
                                                          _T(""),
                                                          wxT ( "*.gpx" )
                                                          );
-                                                         
+
         file_array.Add(path);
         wxFileName fn( path );
         m_gpx_path = fn.GetPath();
-                                                         
+
 #endif
-        
+
     } else {
         if( isdirectory ) {
             if( wxDir::GetAllFiles( dirpath, &file_array, wxT("*.gpx") ) )
@@ -2737,7 +2740,7 @@ void SwitchInlandEcdisMode( bool Switch )
         g_bDrawAISSize = false;
         if (gFrame) gFrame->RequestNewToolbar(true);
     }
-    else{      
+    else{
         wxLogMessage( _T("Switch InlandEcdis mode Off") );
         //reread the settings overruled by inlandEcdis
         if (pConfig){
@@ -2753,7 +2756,7 @@ void SwitchInlandEcdisMode( bool Switch )
             pConfig->Read( _T ( "bDrawAISSize" ), &g_bDrawAISSize );
         }
         if (gFrame) gFrame->RequestNewToolbar(true);
-    }        
+    }
 }
 
 //-------------------------------------------------------------------------

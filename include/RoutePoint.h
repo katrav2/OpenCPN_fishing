@@ -44,7 +44,7 @@ public:
       virtual ~RoutePoint(void);
       void Draw(ocpnDC& dc, wxPoint *rpn = NULL);
       void ReLoadIcon(void);
-      
+
       void SetPosition(double lat, double lon);
       double GetLatitude()  { return m_lat; };
       double GetLongitude() { return m_lon; };
@@ -66,13 +66,13 @@ public:
       wxString GetIconName(void){ return m_IconName; }
       wxBitmap *GetIconBitmap(){ return m_pbmIcon; }
       void SetIconName( wxString name ){ m_IconName = name; }
-      
+
       void *GetSelectNode(void) { return m_SelectNode; }
       void SetSelectNode(void* node) { m_SelectNode = node; }
 
       void *GetManagerListNode(void) { return m_ManagerNode; }
       void SetManagerListNode(void* node) { m_ManagerNode = node; }
-      
+
       void SetName(const wxString & name);
       void CalculateNameExtents(void);
 
@@ -102,7 +102,7 @@ public:
       void SetPointFromDraghandlePoint(ViewPort &vp, double lat, double lon);
       void SetPointFromDraghandlePoint(ViewPort &vp, int x, int y);
       void PresetDragOffset( int x, int y);
-      
+
       double            m_lat, m_lon;
       double             m_seg_len;              // length in NMI to this point
                                                 // undefined for starting point
@@ -143,7 +143,7 @@ public:
       double            m_routeprop_distance;       // distance from this waypoint to the next waypoint if in a route.
 
       bool              m_btemp;
-      
+
       bool              m_bShowWaypointRangeRings;
       int               m_iWaypointRangeRingsNumber;
       float             m_fWaypointRangeRingsStep;
@@ -174,7 +174,7 @@ private:
       wxString          m_MarkName;
       wxBitmap          *m_pbmIcon;
       wxString          m_IconName;
-      
+
       void              *m_SelectNode;
       void              *m_ManagerNode;
 
@@ -186,12 +186,12 @@ private:
       int               m_drag_line_length_man, m_drag_icon_offset;
       double            m_dragHandleLat, m_dragHandleLon;
       int               m_draggingOffsetx, m_draggingOffsety;
- 
+
 #ifdef ocpnUSE_GL
       unsigned int      m_dragIconTexture;
       int               m_dragIconTextureWidth, m_dragIconTextureHeight;
 #endif
-      
+
 };
 
 WX_DECLARE_LIST(RoutePoint, RoutePointList);// establish class as list member

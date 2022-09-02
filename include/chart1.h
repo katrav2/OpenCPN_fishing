@@ -102,27 +102,29 @@ enum
     // The following constants represent the toolbar items (some are also used in menus).
     // They MUST be in the SAME ORDER as on the toolbar and new items MUST NOT be added
     // amongst them, due to the way the toolbar button visibility is saved and calculated.
-    ID_ZOOMIN = 1550,
+    ID_SETTINGS = 1550,
+    ID_ENC_TEXT,
+    ID_ZOOMIN,
     ID_ZOOMOUT,
-    ID_STKUP,
     ID_STKDN,
+    ID_STKUP,
     ID_ROUTE,
     ID_FOLLOW,
-    ID_SETTINGS,
+    ID_TRACK,
     ID_AIS,
-    ID_ENC_TEXT,
     ID_CURRENT,
     ID_TIDE,
     ID_PRINT,
     ID_ROUTEMANAGER,
-    ID_TRACK,
+    ID_WPMANAGER,
+    ID_CASIER,
+    ID_COINPECHE,
     ID_COLSCHEME,
     ID_ABOUT,
     ID_MOB,
     ID_TBEXIT,
     ID_TBSTAT,
-    ID_TBSTATBOX,
-
+    ID_TBSTATBOX,	
     ID_PLUGIN_BASE // This MUST be the last item in the enum
 };
 
@@ -192,15 +194,15 @@ enum
     ID_MENU_AIS_CPADIALOG,
     ID_MENU_AIS_CPASOUND,
     ID_MENU_AIS_TARGETLIST,
-    
+
     ID_MENU_SETTINGS_BASIC,
-    
+
     ID_MENU_OQUIT,
-    
+
     ID_CMD_SELECT_CHART_TYPE,
     ID_CMD_SELECT_CHART_FAMILY,
     ID_CMD_INVALIDATE,
-    
+
 };
 
 enum
@@ -209,6 +211,17 @@ enum
     TIME_TYPE_LMT,
     TIME_TYPE_COMPUTER
 };
+
+enum
+{
+	ID_ICON_CASIER = 0,
+	ID_ICON_MAQUEREAU,
+	ID_ICON_DORADE,
+	ID_ICON_RAIE
+};
+
+typedef enum { LED_OFF = 0, LED_BLINK, LED_ON, LED_UNKNOWN = 999 } eLedStatus;
+
 
 //      Command identifiers for wxCommandEvents coming from the outside world.
 //      Removed from enum to facilitate constant definition
@@ -272,14 +285,14 @@ class OCPN_ThreadMessageEvent: public wxEvent
 public:
     OCPN_ThreadMessageEvent( wxEventType commandType = wxEVT_NULL, int id = 0 );
     ~OCPN_ThreadMessageEvent( );
-    
+
     // accessors
     void SetSString(std::string string) { m_string = string; }
     std::string GetSString() { return m_string; }
-    
+
     // required for sending with wxPostEvent()
     wxEvent *Clone() const;
-    
+
 private:
     std::string m_string;
 };
@@ -307,10 +320,11 @@ class MyApp: public wxApp
     //  Catch malloc/new fail exceptions
     //  All the rest will be caught be CrashRpt
     bool OnExceptionInMainLoop();
-#endif    
-    
+#endif
+
     void TrackOff(void);
-    
+    int FilterEvent(wxEvent& event);
+
     wxSingleInstanceChecker *m_checker;
 
     DECLARE_EVENT_TABLE()
@@ -341,13 +355,14 @@ class MyFrame: public wxFrame
     void OnEvtPlugInMessage( OCPN_MsgEvent & event );
     void OnMemFootTimer(wxTimerEvent& event);
     void OnBellsTimer(wxTimerEvent& event);
+    void OnGPSIndicatorTimer(wxTimerEvent& event);
 #ifdef wxHAS_POWER_EVENTS
     void OnSuspending(wxPowerEvent &event);
     void OnSuspended(wxPowerEvent &event);
     void OnSuspendCancel(wxPowerEvent &event);
     void OnResume(wxPowerEvent &event);
 #endif // wxHAS_POWER_EVENTS
-    
+
     void UpdateAllFonts(void);
     void PositionConsole(void);
     void OnToolLeftClick(wxCommandEvent& event);
@@ -357,13 +372,13 @@ class MyFrame: public wxFrame
     void selectChartDisplay( int type, int family);
     void applySettingsString( wxString settings);
     void setStringVP(wxString VPS);
-    
+
     void DoStackDelta( int direction );
     void DoSettings( void );
-    
+
     void TriggerResize(wxSize sz);
     void OnResizeTimer(wxTimerEvent &event);
-    
+
     void MouseEvent(wxMouseEvent& event);
     void SelectChartFromStack(int index,  bool bDir = false,  ChartTypeEnum New_Type = CHART_TYPE_DONTCARE, ChartFamilyEnum New_Family = CHART_FAMILY_DONTCARE);
     void SelectdbChart(int dbindex);
@@ -398,7 +413,7 @@ class MyFrame: public wxFrame
     void ToggleAnchor(void);
     void TrackOn(void);
     void SetENCDisplayCategory( enum _DisCat nset );
-    
+
     Track *TrackOff(bool do_add_point = false);
     void TrackDailyRestart(void);
     bool ShouldRestartTrack();
@@ -428,7 +443,7 @@ class MyFrame: public wxFrame
     bool IsToolbarShown();
     void SetToolbarScale(void);
     void SetGPSCompassScale(void);
-    
+
     void HandlePianoClick(int selected_index, int selected_dbIndex);
     void HandlePianoRClick(int x, int y,int selected_index, int selected_dbIndex);
     void HandlePianoRollover(int selected_index, int selected_dbIndex);
@@ -437,7 +452,7 @@ class MyFrame: public wxFrame
     void OnPianoMenuDisableChart(wxCommandEvent& event);
     void OnPianoMenuEnableChart(wxCommandEvent& event);
     bool IsPianoContextMenuActive(){ return piano_ctx_menu != 0; }
-    
+
     void SetGroupIndex(int index);
 
     double GetBestVPScale(ChartBase *pchart);
@@ -458,14 +473,24 @@ class MyFrame: public wxFrame
     double GetMag(double a);
     double GetMag(double a, double lat, double lon);
     bool SendJSON_WMM_Var_Request(double lat, double lon, wxDateTime date);
-    
+
     void DestroyPersistentDialogs();
     void TouchAISActive(void);
     void UpdateAISTool(void);
 
+    bool IsMarqueEdited(void);
+    void EnterEditMarque(void);
+    void ExitEditMarque(void);
+    void SelectPreviousMarque(void);
+    void SelectNextMarque(void);
+    void SelectMarque(void *pWp);
+
+    void DisplayRouteManagerDialog(bool bShowWp);
+    void activateRouteManager(void);
+
     void ActivateAISMOBRoute( AIS_Target_Data *ptarget );
     void UpdateAISMOBRoute( AIS_Target_Data *ptarget );
-    
+
     wxStatusBar         *m_pStatusBar;
     wxMenuBar           *m_pMenuBar;
     int                 nRoute_State;
@@ -481,7 +506,8 @@ class MyFrame: public wxFrame
     wxTimer             FrameCOGTimer;
     wxTimer             MemFootTimer;
     wxTimer             m_resizeTimer;
-    
+    wxTimer				GpsIndicatorTimer;
+
     int                 m_BellsToPlay;
     wxTimer             BellsTimer;
 
@@ -491,9 +517,12 @@ class MyFrame: public wxFrame
     void RequestNewToolbar( bool bforcenew = false);
 
     void ActivateMOB(void);
+    void ActivateMarquePeche(int iNumIcon);
+    void ActivateMarquePeche(int iNumIcon, double lat, double lon);
     void UpdateGPSCompassStatusBox(bool b_force_new = false);
+    void UpdateGPSIndicator(void);
     void UpdateRotationState( double rotation );
-    
+
     bool UpdateChartDatabaseInplace(ArrayOfCDI &DirArray,
                                     bool b_force, bool b_prog,
                                     const wxString &ChartListFileName);
@@ -501,12 +530,13 @@ class MyFrame: public wxFrame
     bool                m_bdefer_resize;
     wxSize              m_defer_size;
     wxSize              m_newsize;
-    
+
     void FastClose();
-    
+
   private:
     void ODoSetSize(void);
     void DoCOGSet(void);
+    wxString GetNextMarqueNumber(void);
 
         //      Toolbar support
     ocpnToolBarSimple *CreateAToolbar();
@@ -559,6 +589,8 @@ class MyFrame: public wxFrame
     bool                m_bpersistent_quilt;
     int                 m_ChartUpdatePeriod;
     bool                m_last_bGPSValid;
+    eLedStatus			m_last_ledstatus;
+    bool 				m_blink_led_on;
 
     wxString            prev_locale;
     bool                bPrevQuilt;
@@ -567,13 +599,13 @@ class MyFrame: public wxFrame
 
     MsgPriorityHash     NMEA_Msg_Hash;
     wxString            m_VDO_accumulator;
-    
+
     time_t              m_fixtime;
     wxMenu              *piano_ctx_menu;
     bool                b_autofind;
-    
+
     time_t              m_last_track_rotation_ts;
-    
+
     DECLARE_EVENT_TABLE()
 };
 
@@ -595,9 +627,9 @@ class MyPrintout: public wxPrintout
   void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo);
 
   void DrawPageOne(wxDC *dc);
-  
+
   void GenerateGLbmp(void);
-  
+
 private:
   wxBitmap m_GLbmp;
 
@@ -621,8 +653,8 @@ enum {
     MEMORY_FOOTPRINT_TIMER,
     BELLS_TIMER,
     ID_NMEA_THREADMSG,
-    RESIZE_TIMER
-
+    RESIZE_TIMER,
+    GPS_INDIC_TIMER
 };
 
 //-----------------------------------------------------------------------
@@ -659,48 +691,48 @@ class TimedPopupWin: public wxWindow
 public:
     TimedPopupWin( wxWindow *parent, int timeout = -1 );
     ~TimedPopupWin();
-    
+
     void OnPaint( wxPaintEvent& event );
-    
+
     void SetBitmap( wxBitmap &bmp );
     wxBitmap* GetBitmap() { return m_pbm; }
     void OnTimer( wxTimerEvent& event );
     bool IsActive() { return isActive; }
     void IsActive( bool state ) { isActive = state; }
-    
+
 private:
     wxBitmap *m_pbm;
     wxTimer m_timer_timeout;
     int m_timeout_sec;
     bool isActive;
-    
+
     DECLARE_EVENT_TABLE()
 };
 
 class  OCPN_TimedHTMLMessageDialog: public wxDialog
 {
-    
+
 public:
     OCPN_TimedHTMLMessageDialog(wxWindow *parent, const wxString& message,
                            const wxString& caption = wxMessageBoxCaptionStr,
                            int tSeconds = -1,
-                           long style = wxOK|wxCENTRE,  
+                           long style = wxOK|wxCENTRE,
                            bool bFixedFont = false,
                            const wxPoint& pos = wxDefaultPosition);
-    
+
     void OnYes(wxCommandEvent& event);
     void OnNo(wxCommandEvent& event);
     void OnCancel(wxCommandEvent& event);
     void OnClose( wxCloseEvent& event );
     void OnTimer(wxTimerEvent &evt);
     void RecalculateSize( void );
-    
-    
+
+
 private:
     int m_style;
     wxTimer m_timer;
     wxHtmlWindow *msgWindow;
-    
+
     DECLARE_EVENT_TABLE()
 };
 

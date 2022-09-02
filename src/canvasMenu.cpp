@@ -142,6 +142,11 @@ enum
     ID_DEF_MENU_SCALE_IN,
     ID_DEF_MENU_SCALE_OUT,
     ID_DEF_MENU_DROP_WP,
+    ID_DEF_MENU_DROP_WP_CASIER,
+    ID_DEF_MENU_DROP_WP_DORADE,
+    ID_DEF_MENU_DROP_WP_MAQUER,
+    ID_DEF_MENU_DROP_WP_LIFOND,
+    ID_DEF_MENU_DROP_WP_ROCHER,
     ID_DEF_MENU_QUERY,
     ID_DEF_MENU_MOVE_BOAT_HERE,
     ID_DEF_MENU_GOTO_HERE,
@@ -204,10 +209,10 @@ enum
     ID_DEF_MENU_TIDEINFO,
     ID_DEF_MENU_CURRENTINFO,
     ID_DEF_ZERO_XTE,
-    
+
     ID_DEF_MENU_GROUPBASE,  // Must be last entry, as chart group identifiers are created dynamically
 
-    
+
     ID_DEF_MENU_LAST
 };
 
@@ -253,12 +258,12 @@ void MenuPrepend1( wxMenu *menu, int id, wxString label)
     wxFont *qFont = GetOCPNScaledFont(_T("Menu"));
     item->SetFont(*qFont);
 #endif
-    
+
 #ifdef __OCPN_ANDROID__
     wxFont sFont = GetOCPNGUIScaledFont(_T("Menu"));
     item->SetFont(sFont);
 #endif
-    
+
     menu->Prepend(item);
 }
 
@@ -266,23 +271,23 @@ void MenuAppend1( wxMenu *menu, int id, wxString label)
 {
     wxMenuItem *item = new wxMenuItem(menu, id, label);
 #if defined(__WXMSW__)
-   
+
     wxFont *qFont = GetOCPNScaledFont(_("Menu"));
     item->SetFont(*qFont);
 #endif
-    
+
 #ifdef __OCPN_ANDROID__
     wxFont sFont = GetOCPNGUIScaledFont(_T("Menu"));
     item->SetFont(sFont);
 #endif
-    
+
     menu->Append(item);
 }
 
 void SetMenuItemFont1(wxMenuItem *item)
 {
 #if defined(__WXMSW__) || defined(__OCPN__ANDROID__)
-    
+
     wxFont *qFont = GetOCPNScaledFont(_("Menu"));
     item->SetFont(*qFont);
 #endif
@@ -302,6 +307,12 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
 
     popx = x;
     popy = y;
+
+    if (gFrame->IsMarqueEdited())
+    {
+    	gFrame->ExitEditMarque();
+    	setkeybleds(LED_CAPS, false);
+    }
 
     if( seltype == SELTYPE_ROUTECREATE ) {
         MenuAppend1( contextMenu, ID_RC_MENU_FINISH, _menuText( _( "End Route" ), _T("Esc") ) );
@@ -396,17 +407,22 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
         if( ( pChartTest && ( pChartTest->GetChartFamily() == CHART_FAMILY_VECTOR ) ) || ais_areanotice ) {
             MenuAppend1( contextMenu, ID_DEF_MENU_QUERY, _( "Object Query" ) + _( "..." ) );
         } else {
-#ifndef __OCPN__ANDROID__            
+#ifndef __OCPN__ANDROID__
             if( !g_bBasicMenus && (parent->parent_frame->GetnChartStack() > 1 ) ) {
                 MenuAppend1( contextMenu, ID_DEF_MENU_SCALE_IN, _menuText( _( "Scale In" ), _T("Ctrl-Left") ) );
                 MenuAppend1( contextMenu, ID_DEF_MENU_SCALE_OUT, _menuText( _( "Scale Out" ), _T("Ctrl-Right") ) );
             }
-#endif            
+#endif
         }
     }
 
     if( !g_bBasicMenus || (seltype != SELTYPE_ROUTECREATE )) {
         MenuAppend1( contextMenu, ID_DEF_MENU_DROP_WP, _menuText( _( "Drop Mark" ), _T("Ctrl-M") ) );
+        MenuAppend1( contextMenu, ID_DEF_MENU_DROP_WP_CASIER, _( "Placer un casier ici" ) );
+        MenuAppend1( contextMenu, ID_DEF_MENU_DROP_WP_DORADE, _( "Coin pêche à dorades ici" ) );
+        MenuAppend1( contextMenu, ID_DEF_MENU_DROP_WP_MAQUER, _( "Coin pêche à maquereaux ici" ) );
+        MenuAppend1( contextMenu, ID_DEF_MENU_DROP_WP_LIFOND, _( "Placer une ligne de fond ici" ) );
+        MenuAppend1( contextMenu, ID_DEF_MENU_DROP_WP_ROCHER, _( "Placer une roche dangereuse ici" ) );
 
         if( !bGPSValid )
             MenuAppend1( contextMenu, ID_DEF_MENU_MOVE_BOAT_HERE, _( "Move Boat Here" ) );
@@ -436,15 +452,15 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
             MenuAppend1( contextMenu, ID_DEF_MENU_TOGGLE_FULL, _("Toggle Full Screen") );
             full_toggle_added = true;
         }
-            
-        
+
+
         if(!full_toggle_added){
             if(gFrame->IsFullScreen())
                 MenuAppend1( contextMenu, ID_DEF_MENU_TOGGLE_FULL, _("Toggle Full Screen") );
         }
-#endif            
-        
-        if ( g_pRouteMan->IsAnyRouteActive() && g_pRouteMan->GetCurrentXTEToActivePoint() > 0. ) 
+#endif
+
+        if ( g_pRouteMan->IsAnyRouteActive() && g_pRouteMan->GetCurrentXTEToActivePoint() > 0. )
             MenuAppend1( contextMenu, ID_DEF_ZERO_XTE, _("Zero XTE") );
 
         Kml* kml = new Kml;
@@ -477,9 +493,9 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
         }
 
     }   //if( !g_bBasicMenus){
-        
- 
-#ifndef __OCPN__ANDROID__        
+
+
+#ifndef __OCPN__ANDROID__
     if( ( parent->GetVP().b_quilt ) && ( pCurrentStack && pCurrentStack->b_valid ) ) {
         int dbIndex = parent->m_pQuilt->GetChartdbIndexAtPix( parent->GetVP(), wxPoint( popx, popy ) );
         if( dbIndex != -1 )
@@ -497,7 +513,7 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
     //  ChartGroup SubMenu
     wxMenuItem* subItemChart = contextMenu->AppendSubMenu( subMenuChart, _("Chart Groups") );
     SetMenuItemFont1(subItemChart);
-    
+
     if( g_pGroupArray->GetCount() ) {
 
 #ifdef __WXMSW__
@@ -516,14 +532,14 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
                      g_pGroupArray->Item( i )->m_group_name );
             SetMenuItemFont1(subItem0);
         }
-        
+
 #ifdef __WXMSW__
     subMenuChart->Remove( wxID_CANCEL );
 #endif
         subMenuChart->Check( ID_DEF_MENU_GROUPBASE + g_GroupIndex, true );
     }
-    
-        
+
+
     //  Add PlugIn Context Menu items
     ArrayOfPlugInMenuItems item_array = g_pi_manager->GetPluginContextMenuItemArray();
 
@@ -555,7 +571,7 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
                         pmi->Check((*it)->IsChecked());
                     }
                 }
-                
+
                 wxMenuItem *pmi = new wxMenuItem( contextMenu, pimis->id,
 #if wxCHECK_VERSION(3,0,0)
                                                   pimis->pmenu_item->GetItemLabelText(),
@@ -600,20 +616,20 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
                 MenuAppend1( menuAIS, ID_DEF_MENU_COPY_MMSI, _("Copy Target MMSI") );
 
                 menuAIS->AppendSeparator();
-                
+
                 if( !parent->GetVP().b_quilt ) {
                     if( ( Current_Ch && ( Current_Ch->GetChartFamily() == CHART_FAMILY_VECTOR ) ) ) {
                         MenuAppend1( menuAIS, ID_DEF_MENU_QUERY, _( "Object Query..." ) );
                     }
-                    
+
                 } else {
                     ChartBase *pChartTest = parent->m_pQuilt->GetChartAtPix( parent->GetVP(), wxPoint( x, y ) );
                     if( ( pChartTest && ( pChartTest->GetChartFamily() == CHART_FAMILY_VECTOR ) ) ) {
                         MenuAppend1( menuAIS, ID_DEF_MENU_QUERY, _( "Object Query..." ) );
                     }
                 }
-                        
-                
+
+
                 menuFocus = menuAIS;
             }
         }
@@ -678,8 +694,8 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
                 wxString item = _( "Send to new GPS" );
                 MenuAppend1( menuRoute, ID_RT_MENU_SENDTONEWGPS, item );
             }
-#endif                
-                
+#endif
+
         }
         //      Set this menu as the "focused context menu"
         menuFocus = menuRoute;
@@ -749,13 +765,13 @@ void CanvasMenuHandler::CanvasPopupMenu( int x, int y, int seltype )
                 item.Append(_T(" )") );
             }
             MenuAppend1( menuWaypoint, ID_WPT_MENU_SENDTOGPS, item );
-            
+
             if( !port.IsEmpty() ) {
                 wxString item = _( "Send to new GPS" );
                 MenuAppend1( menuWaypoint, ID_WPT_MENU_SENDTONEWGPS, item );
             }
-            
-            
+
+
         }
         //      Set this menu as the "focused context menu"
         menuFocus = menuWaypoint;
@@ -935,6 +951,41 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
         break;
     }
 
+    case ID_DEF_MENU_DROP_WP_CASIER: {
+    	gFrame->ActivateMarquePeche(ID_ICON_CASIER,zlat,zlon);
+    	break;
+    }
+
+    case ID_DEF_MENU_DROP_WP_DORADE: {
+		gFrame->ActivateMarquePeche(ID_ICON_DORADE,zlat,zlon);
+		break;
+    }
+
+    case ID_DEF_MENU_DROP_WP_MAQUER: {
+		gFrame->ActivateMarquePeche(ID_ICON_MAQUEREAU,zlat,zlon);
+		break;
+    }
+
+    case ID_DEF_MENU_DROP_WP_LIFOND: {
+		gFrame->ActivateMarquePeche(ID_ICON_RAIE,zlat,zlon);
+		break;
+    }
+
+    case ID_DEF_MENU_DROP_WP_ROCHER: {
+    	RoutePoint *pWP = new RoutePoint( zlat, zlon, _T("rocher"), _T("Roche dangereuse"),
+    	                                          GPX_EMPTY_STRING );
+		pWP->m_bIsolatedMark = true;                      // This is an isolated mark
+		pSelect->AddSelectableRoutePoint( zlat, zlon, pWP );
+		pConfig->AddNewWayPoint( pWP, -1 );    // use auto next num
+
+		if( pRouteManagerDialog && pRouteManagerDialog->IsShown() ) pRouteManagerDialog->UpdateWptListCtrl();
+        parent->undo->BeforeUndoableAction( Undo_CreateWaypoint, pWP, Undo_HasParent, NULL );
+		parent->undo->AfterUndoableAction( NULL );
+		parent->InvalidateGL();
+		parent->Refresh( false );      // Needed for MSW, why not GTK??
+		break;
+    }
+
     case ID_DEF_MENU_AISTARGETLIST:
         parent->ShowAISTargetList();
         break;
@@ -978,7 +1029,7 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
     case ID_DEF_MENU_NORTHUP:
         gFrame->ToggleCourseUp();
         break;
-        
+
     case ID_DEF_MENU_TOGGLE_FULL:
         gFrame->ToggleFullScreen();
         break;
@@ -1082,12 +1133,12 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
         if( NULL == g_pCM93OffsetDialog ) {
             g_pCM93OffsetDialog = new CM93OffsetDialog( parent->parent_frame );
         }
-        
+
         cm93compchart *pch = NULL;
         if( !parent->GetVP().b_quilt && Current_Ch  && ( Current_Ch->GetChartType() == CHART_TYPE_CM93COMP ) ) {
                 pch = (cm93compchart *) Current_Ch;
         }
-        
+
         if( g_pCM93OffsetDialog ){
             g_pCM93OffsetDialog->SetCM93Chart( pch );
             g_pCM93OffsetDialog->Show();
@@ -1107,11 +1158,11 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
         break;
     }
 
-    case ID_DEF_MENU_AIS_CPA: {             
-        AIS_Target_Data *myptarget = g_pAIS->Get_Target_Data_From_MMSI(m_FoundAIS_MMSI); 
-        if ( myptarget )                    
-            myptarget->Toggle_AIS_CPA();     
-        break;                              
+    case ID_DEF_MENU_AIS_CPA: {
+        AIS_Target_Data *myptarget = g_pAIS->Get_Target_Data_From_MMSI(m_FoundAIS_MMSI);
+        if ( myptarget )
+            myptarget->Toggle_AIS_CPA();
+        break;
     }
 
     case ID_DEF_MENU_AISSHOWTRACK: {
@@ -1226,11 +1277,11 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
             }
             else
                 best_point = m_pSelectedRoute->GetPoint( 2 );
-        
+
             g_pRouteMan->ActivateRoute( m_pSelectedRoute, best_point );
             m_pSelectedRoute->m_bRtIsSelected = false;
         }
-            
+
 
         break;
     }
@@ -1280,7 +1331,7 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
         parent->parent_frame->nRoute_State = m_pSelectedRoute->GetnPoints() + 1;
         parent->m_pMouseRoute->m_lastMousePointIndex = m_pSelectedRoute->GetnPoints();
         parent->m_pMouseRoute->SetHiLite(50);
-        
+
         pLast = m_pSelectedRoute->GetLastPoint();
 
         parent->m_prev_rlat = pLast->m_lat;
@@ -1292,8 +1343,8 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
         parent->SetCursor( *parent->pCursorPencil );
         #ifdef __OCPN__ANDROID__
         androidSetRouteAnnunciator( true );
-        #endif        
-        
+        #endif
+
         break;
 
     case ID_RT_MENU_COPY:
@@ -1326,12 +1377,12 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
         if( m_pFoundRoutePoint ) {
             SendToGpsDlg dlg;
             dlg.SetWaypoint( m_pFoundRoutePoint );
-                
+
             dlg.Create( NULL, -1, _( "Send to GPS" ) + _T( "..." ), _T("") );
             dlg.ShowModal();
         }
         break;
-        
+
     case ID_RT_MENU_SENDTOGPS:
         if( m_pSelectedRoute ) {
             if( parent->m_active_upload_port.Length() )
@@ -1351,12 +1402,12 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
         if( m_pSelectedRoute ) {
             SendToGpsDlg dlg;
             dlg.SetRoute( m_pSelectedRoute );
-                
+
             dlg.Create( NULL, -1, _( "Send to GPS" ) + _T( "..." ), _T("") );
             dlg.ShowModal();
         }
         break;
-        
+
     case ID_PASTE_WAYPOINT:
         pupHandler_PasteWaypoint();
         break;
@@ -1377,7 +1428,7 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
 
             if( pRoutePropDialog && ( pRoutePropDialog->IsShown() ) ) {
                 //    Selected route may have been deleted as one-point route, so check it
-                if( g_pRouteMan->IsRouteValid( m_pSelectedRoute ) ){        
+                if( g_pRouteMan->IsRouteValid( m_pSelectedRoute ) ){
                     pRoutePropDialog->SetRouteAndUpdate( m_pSelectedRoute, true );
                 }
                 else
@@ -1520,7 +1571,7 @@ void CanvasMenuHandler::PopupMenuHandler( wxCommandEvent& event )
     }
 
     parent->InvalidateGL();
-    
+
     g_click_stop = 0;    // Context menu was processed, all is well
 
 }

@@ -113,7 +113,7 @@ void doUndoMoveWaypoint( UndoAction* action ) {
     if( ( NULL != pMarkPropDialog ) && ( pMarkPropDialog->IsShown() ) ){
        if( currentPoint == pMarkPropDialog->GetRoutePoint() ) pMarkPropDialog->UpdateProperties(true);
        }
-        
+
     wxArrayPtrVoid* routeArray = g_pRouteMan->GetRouteArrayContaining( currentPoint );
     if( routeArray ) {
         for( unsigned int ir = 0; ir < routeArray->GetCount(); ir++ ) {
@@ -133,6 +133,10 @@ void doUndoDeleteWaypoint( UndoAction* action )
     pConfig->AddNewWayPoint( point, -1 );
     if( NULL != pWayPointMan ) pWayPointMan->AddRoutePoint( point );
     if( pRouteManagerDialog && pRouteManagerDialog->IsShown() ) pRouteManagerDialog->UpdateWptListCtrl();
+    if (gFrame && gFrame->IsMarqueEdited())
+    {
+    	if (gFrame) gFrame->SelectMarque(point);
+    }
 }
 
 void doRedoDeleteWaypoint( UndoAction* action )

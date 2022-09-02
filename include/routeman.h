@@ -56,8 +56,8 @@ class markicon_bitmap_list_type;
 class markicon_key_list_type;
 class markicon_description_list_type;
 class MarkIcon;
-WX_DEFINE_SORTED_ARRAY(MarkIcon*, SortedArrayOfMarkIcon); 
-WX_DEFINE_ARRAY(MarkIcon*, ArrayOfMarkIcon); 
+WX_DEFINE_SORTED_ARRAY(MarkIcon*, SortedArrayOfMarkIcon);
+WX_DEFINE_ARRAY(MarkIcon*, ArrayOfMarkIcon);
 
 //----------------------------------------------------------------------------
 //   Routeman
@@ -122,7 +122,7 @@ public:
 
 private:
       void DoAdvance(void);
-    
+
       MyApp       *m_pparent_app;
       Route       *pActiveRoute;
       RoutePoint  *pActivePoint;
@@ -152,10 +152,10 @@ private:
       wxBrush     *m_pRoutePointBrush;
 
       NMEA0183    m_NMEA0183;                         // For autopilot output
-      
+
       double      m_arrival_min;
       int         m_arrival_test;
-      
+
 
 };
 
@@ -189,25 +189,32 @@ public:
       void ProcessDefaultIcons();
       void ReloadAllIcons();
       void ReloadRoutepointIcons();
-      
+
       bool DoesIconExist(const wxString & icon_key) const;
       wxBitmap GetIconBitmapForList(int index);
       wxString *GetIconDescription(int index);
       wxString *GetIconKey(int index);
 
       wxImageList *Getpmarkicon_image_list( double scale = 1.0 );
-      
+
       bool AddRoutePoint(RoutePoint *prp);
       bool RemoveRoutePoint(RoutePoint *prp);
       RoutePointList *GetWaypointList(void) { return m_pWayPointList; }
 
       MarkIcon *ProcessIcon(wxBitmap pimage, const wxString & key, const wxString & description);
+      wxRoutePointListNode* getEditednode() {
+		return m_editednode;
+	}
+
+	void setEditednode(wxRoutePointListNode* editednode) {
+		m_editednode = editednode;
+	}
 private:
       MarkIcon *ProcessLegacyIcon( wxString fileName, const wxString & key, const wxString & description);
       MarkIcon *ProcessExtendedIcon(wxImage &image, const wxString & key, const wxString & description);
       wxRect CropImageOnAlpha(wxImage &image);
       wxImage CreateDimImage( wxImage &image, double factor );
-      
+
       void ProcessUserIcons( ocpnStyle::Style* style );
       RoutePointList    *m_pWayPointList;
       wxBitmap *CreateDimBitmap(wxBitmap *pBitmap, double factor);
@@ -218,10 +225,11 @@ private:
 
       int         m_nGUID;
       double      m_iconListScale;
-      
+      wxRoutePointListNode *m_editednode;
+
       SortedArrayOfMarkIcon    *m_pLegacyIconArray;
       SortedArrayOfMarkIcon    *m_pExtendedIconArray;
-      
+
       int         m_bitmapSizeForList;
       ColorScheme m_cs;
 };

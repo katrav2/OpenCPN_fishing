@@ -53,6 +53,18 @@ msgstr "Propriétés du lien"
 msgid "Options"
 msgstr "Options :"
 
+#: src/chart1.cpp:2932
+msgid "Waypoint Manager"
+msgstr "Gestionnaire de bons coins."
+
+#: src/chart1.cpp:2932
+msgid "Place Trap"
+msgstr "Placer un casier."
+
+#: src/chart1.cpp:2932
+msgid "Fishing Point"
+msgstr "Coin de pêche."
+
 #: include/routeprintout.h:92 src/routeprintout.cpp:362
 msgid "Print Route Selection"
 msgstr "Imprimer la route sélectionnée"
@@ -66,11 +78,11 @@ msgstr "Route : Propriétés"
 #: src/chcanv.cpp:7216 src/routemanagerdialog.cpp:2197
 #: src/routemanagerdialog.cpp:2200 src/routeprop.cpp:561
 msgid "Waypoint Properties"
-msgstr "Waypoint : Propriétés"
+msgstr "Marque : Propriétés"
 
 #: include/routeprop.h:388 include/routeprop.h:410
 msgid "Waypoint Information"
-msgstr "Waypoint/marque : description"
+msgstr "Marque : description"
 
 #: include/SendToGpsDlg.h:38 src/canvasMenu.cpp:669 src/canvasMenu.cpp:745
 #: src/canvasMenu.cpp:787 src/canvasMenu.cpp:1319 src/canvasMenu.cpp:1330
@@ -2564,7 +2576,7 @@ msgstr "Menu"
 
 #: src/canvasMenu.cpp:294
 msgid "Waypoint"
-msgstr "Waypoint"
+msgstr "Marque"
 
 #: src/canvasMenu.cpp:295 src/chcanv.cpp:2381 src/chcanv.cpp:7954
 #: src/concanv.cpp:143 src/concanv.cpp:162 src/concanv.cpp:204
@@ -2652,7 +2664,7 @@ msgstr "Zéro XTE"
 
 #: src/canvasMenu.cpp:455
 msgid "Paste Waypoint"
-msgstr "Coller le waypoint"
+msgstr "Coller la marque"
 
 #: src/canvasMenu.cpp:459 src/canvasMenu.cpp:467
 msgid "Paste Route"
@@ -2724,7 +2736,7 @@ msgstr "Propriétés"
 
 #: src/canvasMenu.cpp:635 src/canvasMenu.cpp:651 src/canvasMenu.cpp:732
 msgid "Activate Next Waypoint"
-msgstr "Activer le prochain waypoint"
+msgstr "Activer la prochaine marque"
 
 #: src/canvasMenu.cpp:637 src/canvasMenu.cpp:653
 #: src/routemanagerdialog.cpp:1068
@@ -2738,11 +2750,11 @@ msgstr "Activer"
 
 #: src/canvasMenu.cpp:660
 msgid "Insert Waypoint"
-msgstr "Insérer un waypoint"
+msgstr "Insérer une marque"
 
 #: src/canvasMenu.cpp:661 src/undo.cpp:90
 msgid "Append Waypoint"
-msgstr "Prolonger"
+msgstr "Ajouter une marque"
 
 #: src/canvasMenu.cpp:662 src/canvasMenu.cpp:700 src/canvasMenu.cpp:738
 #: src/canvasMenu.cpp:780
@@ -2777,7 +2789,7 @@ msgstr "Retirer de la route"
 
 #: src/canvasMenu.cpp:771
 msgid "Layer Waypoint"
-msgstr "Couche de waypoint"
+msgstr "Couche de marques"
 
 #: src/canvasMenu.cpp:778
 msgid "Navigate To This"
@@ -2823,7 +2835,7 @@ msgstr "Aller au curseur (avec route)"
 
 #: src/canvasMenu.cpp:1164 src/routemanagerdialog.cpp:1270
 msgid "Rename Waypoints?"
-msgstr "Renommer les waypoint ?"
+msgstr "Renommer les marques ?"
 
 #: src/canvasMenu.cpp:1184
 msgid "Are you sure you want to delete this route?"
@@ -3418,7 +3430,7 @@ msgstr "Couche des traces: "
 
 #: src/chcanv.cpp:5876 src/chcanv.cpp:6328
 msgid "Use nearby waypoint?"
-msgstr "Utiliser le waypoint situé à proximité ?"
+msgstr "Utiliser la marque située proximité ?"
 
 #: src/chcanv.cpp:5877 src/chcanv.cpp:5929 src/chcanv.cpp:6329
 #: src/chcanv.cpp:6378
@@ -3448,27 +3460,27 @@ msgstr "Couche"
 
 #: src/chcanv.cpp:7298
 msgid "There is an existing waypoint at the same location as the one you are pasting. Would you like to merge the pasted data with it?\n\n"
-msgstr "Il existe déjà un waypoint à cette même position. Voulez vous les fusionner en un seul ?\n\n"
+msgstr "Il existe déjà une marque à cette même position. Voulez vous les fusionner en un seul ?\n\n"
 
 #: src/chcanv.cpp:7299
 msgid "Answering 'No' will create a new waypoint at the same location."
-msgstr "Répondre «Non» créera un nouveau waypoint à la même position."
+msgstr "Répondre «Non» créera une nouvelle marque à la même position."
 
 #: src/chcanv.cpp:7300
 msgid "Merge waypoint?"
-msgstr "Fusionner le waypoint ?"
+msgstr "Fusionner la marque ?"
 
 #: src/chcanv.cpp:7356
 msgid "There are existing waypoints at the same location as some of the ones you are pasting. Would you like to just merge the pasted data into them?\n\n"
-msgstr "Il existe des waypoint aux mêmes positions que ceux que vous voulez créer. Voulez vous seulement recopier leurs caractéristiques dans les nouveaux waypoint\n"
+msgstr "Il existe des marques aux mêmes positions que ceux que vous voulez créer. Voulez vous seulement recopier leurs caractéristiques dans les nouvelles marques?\n"
 
 #: src/chcanv.cpp:7357
 msgid "Answering 'No' will create all new waypoints for this route."
-msgstr "Répondre «Non» créera tous les nouveaux waypoint de cette route."
+msgstr "Répondre «Non» créera tous les nouvelles marques de cette route."
 
 #: src/chcanv.cpp:7358
 msgid "Merge waypoints?"
-msgstr "Fusionner les waypoint ?"
+msgstr "Fusionner les marques ?"
 
 #: src/chcanv.cpp:7820 src/chcanv.cpp:7851 src/RolloverWin.cpp:121
 #: src/RolloverWin.cpp:207 src/RolloverWin.cpp:321
@@ -4496,24 +4508,24 @@ msgstr "Routes"
 
 #: src/options.cpp:2619
 msgid "Waypoint Arrival Circle Radius (NMi)"
-msgstr "Waypoint de destination : Rayon du cercle d'approche en mille(s) nautique(s)"
+msgstr "Marque de destination : Rayon du cercle d'approche en mille(s) nautique(s)"
 
 #: src/options.cpp:2628
 msgid "Advance route waypoint on arrival only"
-msgstr "Anticiper le waypoint à l'arrivée seulement"
+msgstr "Anticiper la marque à l'arrivée seulement"
 
 #: src/options.cpp:2633 src/routemanagerdialog.cpp:669 src/routeprop.cpp:967
 #: src/routeprop.cpp:1316 src/TrackPropDlg.cpp:418
 msgid "Waypoints"
-msgstr "Waypoint"
+msgstr "Marque"
 
 #: src/options.cpp:2649
 msgid "Waypoint range rings"
-msgstr "Cercles centrés sur les waypoint"
+msgstr "Cercles centrés sur les marques"
 
 #: src/options.cpp:2686
 msgid "Waypoint Range Ring Colours"
-msgstr "Couleurs des cercles centrés sur les waypoint"
+msgstr "Couleurs des cercles centrés sur les marques"
 
 #: src/options.cpp:2696
 msgid "Calculate values"
@@ -4585,7 +4597,7 @@ msgstr "Zoom excessif : Limiter le grossissement des objets vectoriels"
 
 #: src/options.cpp:2838
 msgid "Lock Waypoints"
-msgstr "Figer les waypoint"
+msgstr "Figer les marques"
 
 #: src/options.cpp:2843
 msgid "Confirm deletion"
@@ -4655,7 +4667,7 @@ msgstr "Commandes"
 
 #: src/options.cpp:3068
 msgid "Lock Waypoints (Unless waypoint property dialog visible)"
-msgstr "Verrouiller les waypoint ( sauf si la fenêtre de propriétés de l'un d'eux est ouverte)"
+msgstr "Verrouiller les marques ( sauf si la fenêtre de propriétés de l'un d'eux est ouverte)"
 
 #: src/options.cpp:3074
 msgid "Confirm deletion of tracks and routes"
@@ -5616,7 +5628,7 @@ msgstr "Êtes vous certain de vouloir supprimer <TOUTES> les routes ?"
 
 #: src/routemanagerdialog.cpp:1371
 msgid "Do you also want to make the shared waypoints being part of this route invisible?"
-msgstr "Désirez vous également partager les waypoint faisant partie de cette route masquée ?"
+msgstr "Désirez vous également partager les marques faisant partie de cette route masquée ?"
 
 #: src/routemanagerdialog.cpp:1371
 msgid "Question"
@@ -5663,7 +5675,7 @@ msgstr "OpenCPN convertit la trace en route ...."
 
 #: src/routemanagerdialog.cpp:1897
 msgid "Processing Waypoints..."
-msgstr "Traitement des waypoint"
+msgstr "Traitement des marques"
 
 #: src/routemanagerdialog.cpp:1907
 msgid "Done."
@@ -5675,7 +5687,7 @@ msgstr "Êtes vous certain de vouloir supprimer <TOUTES> les traces ?"
 
 #: src/routemanagerdialog.cpp:2261
 msgid "The waypoint you want to delete is used in a route, do you really want to delete it?"
-msgstr "Le waypoint que vous voulez supprimer est utilisé dans une route. Voulez vous vraiment le supprimer ?"
+msgstr "La marque que vous voulez supprimer est utilisé dans une route. Voulez vous vraiment la supprimer ?"
 
 #: src/routemanagerdialog.cpp:2383
 msgid "Are you sure you want to delete <ALL> waypoints?"
@@ -5686,10 +5698,10 @@ msgid "There are some waypoints used in routes or anchor alarms.\n"
 " Do you want to delete them as well?\n"
 " This will change the routes and disable the anchor alarms.\n"
 " Answering No keeps the waypoints used in routes or alarms."
-msgstr "Il y a des waypoint utilisés dans des routes ou des alarmes de mouillage.\n"
+msgstr "Il y a des marques utilisées dans des routes ou des alarmes de mouillage.\n"
 "Voulez-vous les supprimer aussi ?\n"
 "Cela va changer les routes ou désactiver les alarmes de mouillage.\n"
-"Répondre non maintient les waypoint utilisés dans les routes ou les alarmes."
+"Répondre non maintient les marques utilisées dans les routes ou les alarmes."
 
 #: src/routemanagerdialog.cpp:2442
 msgid "Hide from chart"
@@ -5718,8 +5730,8 @@ msgstr "Vous essayez de supprimer une marque MOB. Voulez vous vraiment le faire 
 #: src/routeman.cpp:1042
 msgid "Waypoints can be renamed to reflect the new order, the names will be '001', '002' etc.\n\n"
 "Do you want to rename the waypoints?"
-msgstr "Les Waypoint peuvent être renommés pour respecter le nouvel ordre, les noms seront  '001', '002' etc.\n\n"
-"Voulez vous renommer les waypoint ?"
+msgstr "Les marques peuvent être renommées pour respecter le nouvel ordre, les noms seront  '001', '002' etc.\n\n"
+"Voulez vous renommer les marques ?"
 
 #: src/RoutePoint.cpp:538 src/RoutePoint.cpp:539 src/RoutePoint.cpp:706
 #: src/RoutePoint.cpp:707
@@ -5728,15 +5740,15 @@ msgstr "Marques"
 
 #: src/RoutePoint.cpp:1024
 msgid "Waypoint(s) Transmitted."
-msgstr "Waypoint transmis."
+msgstr "Marque transmise."
 
 #: src/RoutePoint.cpp:1027
 msgid "Error on Waypoint Upload.  Garmin GPS not connected"
-msgstr "Erreur d'envoi du waypoint.  Le GPS Garmin n'est pas connecté."
+msgstr "Erreur d'envoi de la marque.  Le GPS Garmin n'est pas connecté."
 
 #: src/RoutePoint.cpp:1029
 msgid "Error on Waypoint Upload.  Please check logfiles..."
-msgstr "Erreur d'envoi du waypoint. S'il vous plait, regardez dans les fichiers log ...."
+msgstr "Erreur d'envoi de la marque. S'il vous plait, regardez dans les fichiers log ...."
 
 #: src/routeprintout.cpp:105 src/routeprop.cpp:1085 src/routeprop.cpp:1379
 #: src/TrackPropDlg.cpp:444 src/TrackPropDlg.cpp:716
@@ -5745,7 +5757,7 @@ msgstr "Segment"
 
 #: src/routeprintout.cpp:108 src/routeprop.cpp:1086 src/routeprop.cpp:1380
 msgid "To Waypoint"
-msgstr "Vers le waypoint"
+msgstr "Vers la marque"
 
 #: src/routeprintout.cpp:120 src/routeprintout.cpp:416 src/routeprop.cpp:1099
 #: src/routeprop.cpp:1393 src/routeprop.cpp:2635 src/routeprop.cpp:2725
@@ -5759,23 +5771,23 @@ msgstr "Eléments à imprimer ..."
 
 #: src/routeprintout.cpp:392
 msgid "Show Waypoint name."
-msgstr "Montrer le nom des waypoint"
+msgstr "Montrer le nom des marques"
 
 #: src/routeprintout.cpp:399
 msgid "Show Waypoint position."
-msgstr "Montrer la position des waypoint"
+msgstr "Montrer la position des marques"
 
 #: src/routeprintout.cpp:406
 msgid "Show course from each Waypoint to the next one. "
-msgstr "Montrer le COG d'un waypoint au suivant. "
+msgstr "Montrer le COG d'une marque à la suivante. "
 
 #: src/routeprintout.cpp:413
 msgid "Show Distance from each Waypoint to the next one."
-msgstr "Montrer la distance d'un waypoint au suivant."
+msgstr "Montrer la distance d'une marque à la suivante."
 
 #: src/routeprintout.cpp:420
 msgid "Show Waypoint description."
-msgstr "Montrer la description des waypoint."
+msgstr "Montrer la description des marques."
 
 #: src/routeprintout.cpp:485
 msgid "Route Print"
@@ -5807,7 +5819,7 @@ msgstr "Nuit"
 
 #: src/routeprop.cpp:572
 msgid "&Waypoint Properties..."
-msgstr "Waypoint : Propriétés ..."
+msgstr "Marque : Propriétés ..."
 
 #: src/routeprop.cpp:574
 msgid "&Remove Selected"
@@ -6083,11 +6095,11 @@ msgstr "Cap (M)"
 
 #: src/routeprop.cpp:1487
 msgid "Are you sure you want to remove this waypoint?"
-msgstr "Voulez-vous vraiment que la route ne passe plus par ce waypoint?"
+msgstr "Voulez-vous vraiment que la route ne passe plus par cette marque?"
 
 #: src/routeprop.cpp:1488
 msgid "OpenCPN Remove Waypoint"
-msgstr "Waypoint : Déconnexion"
+msgstr "Marque : Déconnexion"
 
 #: src/routeprop.cpp:1730 src/routeprop.cpp:1844
 msgid " %D D  %H H  %M M"
@@ -6123,7 +6135,7 @@ msgstr "Base"
 
 #: src/routeprop.cpp:2500
 msgid "This waypoint is part of a layer and can't be edited"
-msgstr "Cette marque ou ce waypoint appartient à une couche et ne peut être édité"
+msgstr "Cette marque appartient à une couche et ne peut être édité"
 
 #: src/routeprop.cpp:2522
 msgid "Show name"
@@ -6334,7 +6346,7 @@ msgstr "Statistiques"
 
 #: src/TrackPropDlg.cpp:681
 msgid "Recorded points"
-msgstr "Waypoint enregistrés"
+msgstr "Marques enregistrées"
 
 #: src/TrackPropDlg.cpp:697
 msgid "LMT @ Track Start"
@@ -6398,9 +6410,9 @@ msgstr "Reprendre"
 
 #: src/undo.cpp:84
 msgid "Delete Waypoint"
-msgstr "Waypoint : Supprimer"
+msgstr "Marque : Supprimer"
 
 #: src/undo.cpp:87
 msgid "Move Waypoint"
-msgstr "Waypoint : Déplacer"
+msgstr "Marque : Déplacer"
 

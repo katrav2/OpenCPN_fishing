@@ -64,7 +64,7 @@
 
 //#include <wx/arrimpl.cpp> // this is a magic incantation which must be done!
 //WX_DEFINE_ARRAY(MarkIcon *, ArrayOfMarkIcon);
-//WX_DEFINE_OBJARRAY( ArrayOfMarkIcon); 
+//WX_DEFINE_OBJARRAY( ArrayOfMarkIcon);
 
 
 #ifdef ocpnUSE_SVG
@@ -342,7 +342,7 @@ bool Routeman::ActivateRoutePoint( Route *pA, RoutePoint *pRP_target )
     m_bArrival = false;
     m_arrival_min = 1e6;
     m_arrival_test = 0;
-    
+
 
     //    Update the RouteProperties Dialog, if currently shown
     if( ( NULL != pRoutePropDialog ) && ( pRoutePropDialog->IsShown() ) ) {
@@ -503,26 +503,26 @@ bool Routeman::UpdateProgress()
             }
             else {
             //      Test to see if we are moving away from the arrival point, and
-            //      have been moving away for 2 seconds.  
+            //      have been moving away for 2 seconds.
             //      If so, we should declare "Arrival"
                 if( (CurrentRangeToActiveNormalCrossing - m_arrival_min) >  pActivePoint->GetWaypointArrivalRadius() ){
                     if(++m_arrival_test > 2 && !g_bAdvanceRouteWaypointOnArrivalOnly) {
                         m_bArrival = true;
                         UpdateAutopilot();
-                        
+
                         bDidArrival = true;
                         DoAdvance();
                     }
                 }
                 else
                     m_arrival_test = 0;
-                    
+
             }
         }
-        
-        if( !bDidArrival )                                        
+
+        if( !bDidArrival )
             m_arrival_min = wxMin( m_arrival_min, CurrentRangeToActiveNormalCrossing );
-        
+
         if( !bDidArrival )                                        // Only once on arrival
             UpdateAutopilot();
 
@@ -540,7 +540,7 @@ void Routeman::DoAdvance(void)
     {
         Route *pthis_route = pActiveRoute;
         DeactivateRoute( true );                  // this is an arrival
-        
+
         if( pthis_route->m_bDeleteOnArrival && !pthis_route->m_bIsBeingEdited) {
             pConfig->DeleteConfigRoute( pthis_route );
             DeleteRoute( pthis_route );
@@ -551,11 +551,11 @@ void Routeman::DoAdvance(void)
 
         if( pRouteManagerDialog )
             pRouteManagerDialog->UpdateRouteListCtrl();
-                            
+
     }
 }
-                    
-    
+
+
 
 bool Routeman::DeactivateRoute( bool b_arrival )
 {
@@ -599,7 +599,7 @@ bool Routeman::DeactivateRoute( bool b_arrival )
 bool Routeman::UpdateAutopilot()
 {
     //Send all known Autopilot messages upstream
-    
+
     //RMB
         {
 
@@ -685,47 +685,47 @@ bool Routeman::UpdateAutopilot()
         // APB
         {
             m_NMEA0183.TalkerID = _T("EC");
-            
+
             SENTENCE snt;
-             
+
             m_NMEA0183.Apb.IsLoranBlinkOK = NTrue;
             m_NMEA0183.Apb.IsLoranCCycleLockOK = NTrue;
-            
+
             m_NMEA0183.Apb.CrossTrackErrorMagnitude = CurrentXTEToActivePoint;
-            
+
             if( XTEDir < 0 ) m_NMEA0183.Apb.DirectionToSteer = Left;
             else
                 m_NMEA0183.Apb.DirectionToSteer = Right;
-            
+
             m_NMEA0183.Apb.CrossTrackUnits = _T("N");
 
             if( m_bArrival )
                 m_NMEA0183.Apb.IsArrivalCircleEntered = NTrue;
             else
                 m_NMEA0183.Apb.IsArrivalCircleEntered = NFalse;
- 
+
             //  We never pass the perpendicular, since we declare arrival before reaching this point
             m_NMEA0183.Apb.IsPerpendicular = NFalse;
 
             m_NMEA0183.Apb.To = pActivePoint->GetName().Truncate( 6 );
-            
+
             double brg1, dist1;
             DistanceBearingMercator( pActivePoint->m_lat, pActivePoint->m_lon,
                                      pActiveRouteSegmentBeginPoint->m_lat, pActiveRouteSegmentBeginPoint->m_lon,
                                      &brg1,
                                      &dist1 );
-            
+
             if( g_bMagneticAPB && !wxIsNaN(gVar) ) {
-                
+
                 double brg1m = ((brg1 - gVar) >= 0.) ? (brg1 - gVar) : (brg1 - gVar + 360.);
                 double bapm = ((CurrentBrgToActivePoint - gVar) >= 0.) ? (CurrentBrgToActivePoint - gVar) : (CurrentBrgToActivePoint - gVar + 360.);
-                
+
                 m_NMEA0183.Apb.BearingOriginToDestination = brg1m;
                 m_NMEA0183.Apb.BearingOriginToDestinationUnits = _T("M");
-                
+
                 m_NMEA0183.Apb.BearingPresentPositionToDestination = bapm;
                 m_NMEA0183.Apb.BearingPresentPositionToDestinationUnits = _T("M");
-                
+
                 m_NMEA0183.Apb.HeadingToSteer = bapm;
                 m_NMEA0183.Apb.HeadingToSteerUnits = _T("M");
             }
@@ -735,38 +735,38 @@ bool Routeman::UpdateAutopilot()
 
                 m_NMEA0183.Apb.BearingPresentPositionToDestination = CurrentBrgToActivePoint;
                 m_NMEA0183.Apb.BearingPresentPositionToDestinationUnits = _T("T");
-            
+
 
                 m_NMEA0183.Apb.HeadingToSteer = CurrentBrgToActivePoint;
                 m_NMEA0183.Apb.HeadingToSteerUnits = _T("T");
             }
-            
+
             m_NMEA0183.Apb.Write( snt );
             g_pMUX->SendNMEAMessage( snt.Sentence );
         }
-        
+
         // XTE
         {
             m_NMEA0183.TalkerID = _T("EC");
-            
+
             SENTENCE snt;
-             
+
             m_NMEA0183.Xte.IsLoranBlinkOK = NTrue;
             m_NMEA0183.Xte.IsLoranCCycleLockOK = NTrue;
-            
+
             m_NMEA0183.Xte.CrossTrackErrorDistance = CurrentXTEToActivePoint;
-            
+
             if( XTEDir < 0 ) m_NMEA0183.Xte.DirectionToSteer = Left;
             else
                 m_NMEA0183.Xte.DirectionToSteer = Right;
-            
+
             m_NMEA0183.Xte.CrossTrackUnits = _T("N");
 
             m_NMEA0183.Xte.Write( snt );
             g_pMUX->SendNMEAMessage( snt.Sentence );
         }
-        
-       
+
+
     return true;
 }
 
@@ -781,34 +781,34 @@ bool Routeman::DoesRouteContainSharedPoints( Route *pRoute )
 
             // check all other routes to see if this point appears in any other route
             wxArrayPtrVoid *pRA = GetRouteArrayContaining( prp );
-            
+
              if( pRA ) {
                  for( unsigned int ir = 0; ir < pRA->GetCount(); ir++ ) {
                     Route *pr = (Route *) pRA->Item( ir );
                     if( pr == pRoute)
                         continue;               // self
-                    else 
+                    else
                         return true;
                 }
             }
-                
+
             if( pnode ) pnode = pnode->GetNext();
         }
-        
+
         //      Now walk the route again, looking for isolated type shared waypoints
         pnode = ( pRoute->pRoutePointList )->GetFirst();
         while( pnode ) {
             RoutePoint *prp = pnode->GetData();
             if( prp->m_bKeepXRoute == true )
                 return true;
-            
+
            if( pnode ) pnode = pnode->GetNext();
         }
     }
-    
+
     return false;
 }
-  
+
 
 
 bool Routeman::DeleteRoute( Route *pRoute )
@@ -817,7 +817,7 @@ bool Routeman::DeleteRoute( Route *pRoute )
         if( pRoute == pAISMOBRoute )
         {
             int ret = OCPNMessageBox( NULL, _("You are trying to delete an active AIS MOB route, are you REALLY sure?"), _("OpenCPN Warning"), wxYES_NO );
-            
+
             if( ret == wxID_NO )
                 return false;
             else
@@ -831,7 +831,7 @@ bool Routeman::DeleteRoute( Route *pRoute )
             ::wxEndBusyCursor();
             return false;
         }
-            
+
         pConfig->DeleteConfigRoute( pRoute );
 
         //    Remove the route from associated lists
@@ -951,12 +951,12 @@ void Routeman::DeleteTrack( Track *pTrack )
 
         int count = pTrack->GetnPoints();
         if( count > 10000) {
-            pprog = new wxProgressDialog( _("OpenCPN Track Delete"), _T("0/0"), count, NULL, 
+            pprog = new wxProgressDialog( _("OpenCPN Track Delete"), _T("0/0"), count, NULL,
                                           wxPD_APP_MODAL | wxPD_SMOOTH |
                                           wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME | wxPD_REMAINING_TIME );
             pprog->SetSize( 400, wxDefaultCoord );
             pprog->Centre();
-            
+
         }
 
         //    Remove the track from associated lists
@@ -1001,7 +1001,7 @@ void Routeman::DeleteTrack( Track *pTrack )
 void Routeman::SetColorScheme( ColorScheme cs )
 {
     // Re-Create the pens and colors
-    
+
     int scaled_line_width = g_route_line_width;
     int track_scaled_line_width = g_track_line_width;
     if(g_btouch){
@@ -1027,7 +1027,7 @@ void Routeman::SetColorScheme( ColorScheme cs )
                                                        scaled_line_width, wxPENSTYLE_SOLID );
     m_pTrackPen = wxThePenList->FindOrCreatePen( GetGlobalColor( _T("CHMGD") ), track_scaled_line_width,
                                                  wxPENSTYLE_SOLID );
-    
+
     m_pRouteBrush = wxTheBrushList->FindOrCreateBrush( GetGlobalColor( _T("UINFB") ), wxBRUSHSTYLE_SOLID );
     m_pSelectedRouteBrush = wxTheBrushList->FindOrCreateBrush( GetGlobalColor( _T("UINFO") ),
             wxBRUSHSTYLE_SOLID );
@@ -1047,12 +1047,12 @@ Route *Routeman::FindRouteByGUID(const wxString &guid)
     wxRouteListNode *node1 = pRouteList->GetFirst();
     while( node1 ) {
         Route *pRoute = node1->GetData();
-        
+
         if( pRoute->m_GUID == guid )
             return pRoute;
         node1 = node1->GetNext();
     }
- 
+
     return NULL;
 }
 
@@ -1061,12 +1061,12 @@ Track *Routeman::FindTrackByGUID(const wxString &guid)
     wxTrackListNode *node1 = pTrackList->GetFirst();
     while( node1 ) {
         Track *pTrack = node1->GetData();
-        
+
         if( pTrack->m_GUID == guid )
             return pTrack;
         node1 = node1->GetNext();
     }
- 
+
     return NULL;
 }
 
@@ -1097,9 +1097,9 @@ WayPointman::WayPointman()
     m_pIconArray = new ArrayOfMarkIcon;
     m_pLegacyIconArray = NULL;
     m_pExtendedIconArray = NULL;
-    
+
     m_cs = (ColorScheme)-1;
-    
+
     m_nGUID = 0;
     m_iconListScale = -999.0;
 }
@@ -1144,10 +1144,10 @@ bool WayPointman::AddRoutePoint(RoutePoint *prp)
 {
     if(!prp)
         return false;
-    
+
     wxRoutePointListNode *prpnode = m_pWayPointList->Append(prp);
     prp->SetManagerListNode( prpnode );
-    
+
     return true;
 }
 
@@ -1155,16 +1155,16 @@ bool WayPointman::RemoveRoutePoint(RoutePoint *prp)
 {
     if(!prp)
         return false;
-    
+
     wxRoutePointListNode *prpnode = (wxRoutePointListNode *)prp->GetManagerListNode();
-    
-    if(prpnode) 
+
+    if(prpnode)
         delete prpnode;
     else
         m_pWayPointList->DeleteObject(prp);
-    
+
     prp->SetManagerListNode( NULL );
-    
+
     return true;
 }
 
@@ -1173,28 +1173,28 @@ void WayPointman::ProcessUserIcons( ocpnStyle::Style* style )
     wxString msg;
     msg.Printf(_T("DPMM: %g   ScaleFactorExp: %g"), g_Platform->GetDisplayDPmm(), g_ChartScaleFactorExp);
     wxLogMessage(msg);
-    
+
     wxString UserIconPath = g_Platform->GetPrivateDataDir();
     wxChar sep = wxFileName::GetPathSeparator();
     if( UserIconPath.Last() != sep ) UserIconPath.Append( sep );
     UserIconPath.Append( _T("UserIcons") );
-    
+
     wxLogMessage(_T("Looking for UserIcons at ") + UserIconPath );
-    
+
     if( wxDir::Exists( UserIconPath ) ) {
         wxLogMessage(_T("Loading UserIcons from ") + UserIconPath );
         wxArrayString FileList;
-        
+
         wxDir dir( UserIconPath );
         int n_files = dir.GetAllFiles( UserIconPath, &FileList );
-        
+
         for( int ifile = 0; ifile < n_files; ifile++ ) {
             wxString name = FileList.Item( ifile );
-            
+
             wxFileName fn( name );
             wxString iconname = fn.GetName();
             wxBitmap icon1;
-            
+
             if( fn.GetExt().Lower() == _T("xpm") ) {
                 if( icon1.LoadFile( name, wxBITMAP_TYPE_XPM ) ) {
                     ProcessIcon( icon1, iconname, iconname );
@@ -1213,7 +1213,7 @@ void WayPointman::ProcessUserIcons( ocpnStyle::Style* style )
                 if(pmi)
                     pmi->preScaled = true;
             }
-            
+
         }
     }
 }
@@ -1222,47 +1222,54 @@ void WayPointman::ProcessUserIcons( ocpnStyle::Style* style )
 void WayPointman::ProcessIcons( ocpnStyle::Style* style )
 {
     m_pIconArray->Clear();
-    
+
     ProcessDefaultIcons();
-    
+
+    ProcessIcon( style->GetIcon( _T("casier") ), _T("casier"), _T("Casier") );
+    ProcessIcon( style->GetIcon( _T("maquereau") ), _T("maquereau"), _T("Maquereaux") );
+    ProcessIcon( style->GetIcon( _T("dorade") ), _T("dorade"), _T("Dorades") );
+    ProcessIcon( style->GetIcon( _T("lignefond") ), _T("lignefond"), _T("Ligne de fond") );
+    ProcessIcon( style->GetIcon( _T("rocher") ), _T("rocher"), _T("Rocher") );
+    ProcessIcon( style->GetIcon( _T("roche_danger") ), _T("roche_danger"), _T("Roche_danger") );
+
     // Load user defined icons.
     // Done after default icons are initialized,
     // so that user may substitute an icon by using the same name in the Usericons file.
     ProcessUserIcons( style );
-    
+
     if( NULL != pmarkicon_image_list ) {
         pmarkicon_image_list->RemoveAll();
         delete pmarkicon_image_list;
         pmarkicon_image_list = NULL;
     }
-    
+
     // First find the largest bitmap size, to use as the base size for lists of icons
     int w = 0;
     int h = 0;
-    
+
     for( unsigned int i = 0; i < m_pIconArray->GetCount(); i++ ) {
         MarkIcon *pmi = (MarkIcon *) m_pIconArray->Item( i );
         w = wxMax(w, pmi->iconImage.GetWidth());
         h = wxMax(h, pmi->iconImage.GetHeight());
     }
-    
+
     m_bitmapSizeForList = wxMax(w,h);
     m_bitmapSizeForList = wxMin(100, m_bitmapSizeForList);
-    
-    
+
+
 }
 
 void WayPointman::ProcessDefaultIcons()
 {
     wxString iconDir = g_Platform->GetSharedDataDir() + _T("uidata/markicons/");
     MarkIcon *pmi = 0;
-    
+
     // Add the legacy icons to their own sorted array
     if(m_pLegacyIconArray)
         m_pLegacyIconArray->Clear();
     else
         m_pLegacyIconArray = new SortedArrayOfMarkIcon(CompareMarkIcons);
-    
+
     pmi = ProcessLegacyIcon( iconDir + _T("Symbol-Empty.svg"), _T("empty"), _T("Empty") ); if(pmi)pmi->preScaled = true;
     pmi = ProcessLegacyIcon( iconDir + _T("Hazard-Airplane.svg"), _T("airplane"), _T("Airplane") ); if(pmi)pmi->preScaled = true;
     pmi = ProcessLegacyIcon( iconDir + _T("1st-Anchorage.svg"), _T("anchorage"), _T("Anchorage") ); if(pmi)pmi->preScaled = true;
@@ -1307,31 +1314,31 @@ void WayPointman::ProcessDefaultIcons()
     pmi = ProcessLegacyIcon( iconDir + _T("Symbol-X-Small-Green.svg"), _T("xmgreen"), _T("Green X") ); if(pmi)pmi->preScaled = true;
     pmi = ProcessLegacyIcon( iconDir + _T("Symbol-X-Small-Red.svg"), _T("xmred"), _T("Red X") ); if(pmi)pmi->preScaled = true;
     pmi = ProcessLegacyIcon( iconDir + _T("1st-Active-Waypoint.svg"), _T("activepoint"), _T("Active WP") ); if(pmi)pmi->preScaled = true;
-   
-   
-    
-    
+
+
+
+
     // Add the extended icons to their own sorted array
     if(m_pExtendedIconArray)
         m_pExtendedIconArray->Clear();
     else
         m_pExtendedIconArray = new SortedArrayOfMarkIcon(CompareMarkIcons);
-    
+
 
     wxArrayString FileList;
     double bm_size = -1;
-     
+
     int n_files = wxDir::GetAllFiles( iconDir, &FileList );
-    
+
     // If the scale factor is not unity, measure the first icon in the list
     //  So that we may apply the scale factor exactly to all
     if( fabs(g_ChartScaleFactorExp - 1.0) > 0.1){
-        
+
         for( int ifile = 0; ifile < n_files; ifile++ ) {
             wxString name = FileList.Item( ifile );
-        
+
             wxFileName fn( name );
-        
+
             if( fn.GetExt().Lower() == _T("svg") ) {
                 wxBitmap bmt = LoadSVGIcon(name, -1, -1 );
                 bm_size = bmt.GetWidth() * g_ChartScaleFactorExp;
@@ -1340,14 +1347,14 @@ void WayPointman::ProcessDefaultIcons()
         }
     }
 
-    
+
     for( int ifile = 0; ifile < n_files; ifile++ ) {
         wxString name = FileList.Item( ifile );
-            
+
         wxFileName fn( name );
         wxString iconname = fn.GetName();
         wxBitmap icon1;
-            
+
         if( fn.GetExt().Lower() == _T("svg") ) {
             wxImage iconSVG = LoadSVGIcon( name, (int)bm_size, (int)bm_size );
             MarkIcon * pmi = ProcessExtendedIcon( iconSVG, iconname, iconname );
@@ -1366,7 +1373,7 @@ void WayPointman::ProcessDefaultIcons()
 
     for( unsigned int i = 0; i < m_pExtendedIconArray->GetCount(); i++ ) {
         pmi = (MarkIcon *) m_pExtendedIconArray->Item( i );
-        
+
         //  Do not add any icons from the extended array if they have already been used as legacy substitutes
         bool noAdd = false;
         for( unsigned int j = 0; j < m_pLegacyIconArray->GetCount(); j++ ) {
@@ -1378,7 +1385,7 @@ void WayPointman::ProcessDefaultIcons()
         }
         if(!noAdd)
             m_pIconArray->Add( pmi );
-        
+
     }
 }
 
@@ -1415,16 +1422,16 @@ MarkIcon *WayPointman::ProcessIcon(wxBitmap pimage, const wxString & key, const 
     pmi->iconImage = pbm->ConvertToImage();
     pmi->m_blistImageOK = false;
     delete pbm;
-    
+
     return pmi;
 }
 
 MarkIcon *WayPointman::ProcessExtendedIcon(wxImage &image, const wxString & key, const wxString & description)
 {
     MarkIcon *pmi = 0;
-    
+
     bool newIcon = true;
-    
+
     // avoid adding duplicates
     for( unsigned int i = 0; i < m_pExtendedIconArray->GetCount(); i++ ) {
         pmi = (MarkIcon *) m_pExtendedIconArray->Item( i );
@@ -1434,7 +1441,7 @@ MarkIcon *WayPointman::ProcessExtendedIcon(wxImage &image, const wxString & key,
             break;
         }
     }
-    
+
     if( newIcon ) {
         pmi = new MarkIcon;
         pmi->icon_name = key;                   // Used for sorting
@@ -1443,7 +1450,7 @@ MarkIcon *WayPointman::ProcessExtendedIcon(wxImage &image, const wxString & key,
 
     wxRect rClip = CropImageOnAlpha(image);
     wxImage imageClip = image.GetSubImage(rClip);
-    
+
     pmi->icon_name = key;
     pmi->icon_description = description;
     pmi->piconBitmap = NULL;
@@ -1451,7 +1458,7 @@ MarkIcon *WayPointman::ProcessExtendedIcon(wxImage &image, const wxString & key,
     pmi->preScaled = false;
     pmi->iconImage = imageClip;
     pmi->m_blistImageOK = false;
-    
+
     return pmi;
 }
 
@@ -1462,15 +1469,15 @@ MarkIcon *WayPointman::ProcessLegacyIcon( wxString fileName, const wxString & ke
         wxImage img = LoadSVGIcon(fileName, -1, -1 );
         bm_size = img.GetWidth() * g_ChartScaleFactorExp;
     }
-        
+
     wxImage image = LoadSVGIcon(fileName, (int)bm_size, (int)bm_size );
     wxRect rClip = CropImageOnAlpha(image);
     wxImage imageClip = image.GetSubImage(rClip);
-    
+
     MarkIcon *pmi = 0;
-    
+
     bool newIcon = true;
-    
+
     // avoid adding duplicates
     for( unsigned int i = 0; i < m_pLegacyIconArray->GetCount(); i++ ) {
         pmi = (MarkIcon *) m_pLegacyIconArray->Item( i );
@@ -1480,13 +1487,13 @@ MarkIcon *WayPointman::ProcessLegacyIcon( wxString fileName, const wxString & ke
             break;
         }
     }
-    
+
     if( newIcon ) {
         pmi = new MarkIcon;
         pmi->icon_name = key;                   // Used for sorting
         m_pLegacyIconArray->Add( pmi );
     }
-    
+
     pmi->icon_name = key;
     pmi->icon_description = description;
     pmi->piconBitmap = NULL;
@@ -1494,7 +1501,7 @@ MarkIcon *WayPointman::ProcessLegacyIcon( wxString fileName, const wxString & ke
     pmi->preScaled = false;
     pmi->iconImage = imageClip;
     pmi->m_blistImageOK = false;
-    
+
     return pmi;
 }
 
@@ -1506,72 +1513,72 @@ wxRect WayPointman::CropImageOnAlpha(wxImage &image)
     wxRect rv = wxRect(0,0, w, h);
     if(!image.HasAlpha())
         return rv;
-    
+
     unsigned char *pAlpha = image.GetAlpha();
-    
+
     int leftCrop = w;
     int topCrop = h;
     int rightCrop = w;
     int bottomCrop = h;
-    
+
     // Horizontal
     for(int i=0 ; i < h ; i++){
         int lineStartIndex = i *w;
-        
+
         int j = 0;
         while((j < w) && (pAlpha[lineStartIndex+j] == 0) )
             j++;
         leftCrop = wxMin(leftCrop, j);
-        
+
         int k = w - 1;
         while( k && (pAlpha[lineStartIndex+k] == 0) )
             k--;
         rightCrop = wxMin(rightCrop, image.GetWidth() - k - 2);
     }
- 
+
     // Vertical
     for(int i=0 ; i < w ; i++){
         int columnStartIndex = i;
-        
+
         int j = 0;
         while((j < h) && (pAlpha[columnStartIndex+ (j * w)] == 0) )
             j++;
         topCrop = wxMin(topCrop, j);
-        
+
         int k = h - 1;
         while( k && (pAlpha[columnStartIndex+(k * w)] == 0) )
             k--;
         bottomCrop = wxMin(bottomCrop, h - k - 2);
     }
- 
+
     int xcrop = wxMin(rightCrop, leftCrop);
     int ycrop = wxMin(topCrop, bottomCrop);
     int crop = wxMin(xcrop, ycrop);
-    
+
     rv.x = wxMax(crop, 0);
     rv.width = wxMax(1, w - (2 * crop));
     rv.width = wxMin(rv.width, w);
     rv.y = rv.x;
     rv.height = rv.width;
-    
+
     return rv;
-        
+
 }
-    
+
 wxImageList *WayPointman::Getpmarkicon_image_list( double scale )
 {
     // Cached version available?
     if( pmarkicon_image_list && (fabs(scale-m_iconListScale) < .001)){
         return pmarkicon_image_list;
     }
-    
+
     //  Create the scaled list
-    
+
     int w = m_bitmapSizeForList;
     int h = m_bitmapSizeForList;
     w *= scale;
     h *= scale;
-    
+
     // Build an image list large enough
 
     if( NULL != pmarkicon_image_list ) {
@@ -1581,7 +1588,7 @@ wxImageList *WayPointman::Getpmarkicon_image_list( double scale )
     pmarkicon_image_list = new wxImageList( w, h );
 
     m_iconListScale = scale;
-        
+
     return pmarkicon_image_list;
 }
 
@@ -1613,9 +1620,9 @@ wxImage WayPointman::CreateDimImage( wxImage &image, double factor )
 {
     int sx = image.GetWidth();
     int sy = image.GetHeight();
-    
+
     wxImage new_img( image );
-    
+
     for( int i = 0; i < sx; i++ ) {
         for( int j = 0; j < sy; j++ ) {
             if( !image.IsTransparent( i, j ) ) {
@@ -1625,10 +1632,10 @@ wxImage WayPointman::CreateDimImage( wxImage &image, double factor )
             }
         }
     }
-    
-    
+
+
     return wxImage(new_img);
-    
+
 }
 
 void WayPointman::SetColorScheme( ColorScheme cs )
@@ -1640,7 +1647,7 @@ void WayPointman::SetColorScheme( ColorScheme cs )
 void WayPointman::ReloadAllIcons(  )
 {
     ProcessIcons( g_StyleManager->GetCurrentStyle() );
- 
+
     for( unsigned int i = 0; i < m_pIconArray->GetCount(); i++ ) {
         MarkIcon *pmi = (MarkIcon *) m_pIconArray->Item( i );
         wxImage dim_image;
@@ -1653,14 +1660,14 @@ void WayPointman::ReloadAllIcons(  )
             pmi->iconImage = dim_image;
         }
     }
-    
+
     ReloadRoutepointIcons();
 }
 
 void WayPointman::ReloadRoutepointIcons()
 {
     //    Iterate on the RoutePoint list, requiring each to reload icon
-    
+
     wxRoutePointListNode *node = m_pWayPointList->GetFirst();
     while( node ) {
         RoutePoint *pr = node->GetData();
@@ -1724,13 +1731,13 @@ bool WayPointman::GetIconPrescaled( const wxString& icon_key )
 {
     MarkIcon *pmi = NULL;
     unsigned int i;
-    
+
     for( i = 0; i < m_pIconArray->GetCount(); i++ ) {
         pmi = (MarkIcon *) m_pIconArray->Item( i );
         if( pmi->icon_name.IsSameAs( icon_key ) )
             break;
     }
-    
+
     if( i == m_pIconArray->GetCount() )              // key not found
     {
         // find and return bitmap for "circle"
@@ -1740,10 +1747,10 @@ bool WayPointman::GetIconPrescaled( const wxString& icon_key )
             //                break;
         }
     }
-    
+
     if( i == m_pIconArray->GetCount() )              // "circle" not found
         pmi = (MarkIcon *) m_pIconArray->Item( 0 );       // use item 0
-        
+
     if( pmi )
         return pmi->preScaled;
     else
@@ -1757,7 +1764,7 @@ unsigned int WayPointman::GetIconTexture( const wxBitmap *pbm, int &glw, int &gl
     MarkIcon *pmi = (MarkIcon *) m_pIconArray->Item( index );
 
     if(!pmi->icon_texture) {
-        /* make rgba texture */       
+        /* make rgba texture */
         wxImage image = pbm->ConvertToImage();
         unsigned char *d = image.GetData();
         if (d == 0) {
@@ -1767,23 +1774,23 @@ unsigned int WayPointman::GetIconTexture( const wxBitmap *pbm, int &glw, int &gl
 
         glGenTextures(1, &pmi->icon_texture);
         glBindTexture(GL_TEXTURE_2D, pmi->icon_texture);
-                
+
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
-        
-        
+
+
         int w = image.GetWidth(), h = image.GetHeight();
-        
+
         pmi->tex_w = NextPow2(w);
         pmi->tex_h = NextPow2(h);
-        
+
         unsigned char *a = image.GetAlpha();
-            
+
         unsigned char mr, mg, mb;
         if (!a)
             image.GetOrFindMaskColour( &mr, &mg, &mb );
-    
+
         unsigned char *e = new unsigned char[4 * w * h];
         for( int y = 0; y < h; y++ ) {
                 for( int x = 0; x < w; x++ ) {
@@ -1795,11 +1802,11 @@ unsigned int WayPointman::GetIconTexture( const wxBitmap *pbm, int &glw, int &gl
                     e[off * 4 + 0] = r;
                     e[off * 4 + 1] = g;
                     e[off * 4 + 2] = b;
-                    
+
                     e[off * 4 + 3] =  a ? a[off] : ( ( r == mr ) && ( g == mg ) && ( b == mb ) ? 0 : 255 );
                 }
         }
-    
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pmi->tex_w, pmi->tex_h,
                      0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h,
@@ -1822,7 +1829,7 @@ wxBitmap WayPointman::GetIconBitmapForList( int index )
 {
     wxBitmap pret;
     MarkIcon *pmi;
-    
+
     if( index >= 0 ) {
         pmi = (MarkIcon *) m_pIconArray->Item( index );
         // Scale the icon to "list size" if necessary
@@ -1831,7 +1838,7 @@ wxBitmap WayPointman::GetIconBitmapForList( int index )
             int h = m_bitmapSizeForList;
             int w0 = pmi->iconImage.GetWidth();
             int h0 = pmi->iconImage.GetHeight();
-            
+
             wxImage icon_larger;
             if( h0 <= h && w0 <= w ) {
                  icon_larger = pmi->iconImage.Resize( wxSize( w, h ), wxPoint( w/2 -w0/2, h/2-h0/2 ) );
@@ -1840,23 +1847,23 @@ wxBitmap WayPointman::GetIconBitmapForList( int index )
                 int h1 = h;
                 int w1 = w;
                 if( h0 > h ) w1 = wxRound( (double) w0 * ( (double) h / (double) h0 ) );
-                
+
                 else if( w0 > w ) h1 = wxRound( (double) h0 * ( (double) w / (double) w0 ) );
-                
+
                 icon_larger = pmi->iconImage.Rescale( w1, h1 );
                 icon_larger = pmi->iconImage.Resize( wxSize( w, h ), wxPoint( w/2 -w1/2, h/2-h1/2 ) );
             }
-            
+
             pret = wxBitmap(icon_larger);
-            
+
         }
         else
             pret = wxBitmap(pmi->iconImage);
-        
-        
+
+
     }
-    
-    
+
+
     return pret;
 }
 
@@ -1890,7 +1897,7 @@ int WayPointman::GetIconIndex( const wxBitmap *pbm )
 {
     unsigned int ret = 0;
     MarkIcon *pmi = NULL;
-    
+
     for( unsigned int i = 0; i < m_pIconArray->GetCount(); i++ ) {
         pmi = (MarkIcon *) m_pIconArray->Item( i );
         if( pmi->piconBitmap == pbm ){
@@ -1898,10 +1905,10 @@ int WayPointman::GetIconIndex( const wxBitmap *pbm )
             break;
         }
     }
-    
+
     return ret;
 }
-    
+
 
 int WayPointman::GetIconImageListIndex( const wxBitmap *pbm )
 {
@@ -1912,14 +1919,14 @@ int WayPointman::GetIconImageListIndex( const wxBitmap *pbm )
         pmi = (MarkIcon *) m_pIconArray->Item( i );
         if( pmi->piconBitmap == pbm ) break;
     }
-    
+
     // Build a "list - sized" image
     if(pmi && pmarkicon_image_list && !pmi->m_blistImageOK){
         int h0 = pmi->iconImage.GetHeight();
         int w0 = pmi->iconImage.GetWidth();
         int h = m_bitmapSizeForList;
         int w = m_bitmapSizeForList;
-        
+
         wxImage icon_larger;
         if( h0 <= h && w0 <= w ) {
             icon_larger =  pmi->iconImage.Resize( wxSize( w, h ), wxPoint( w/2 -w0/2, h/2-h0/2 ) );
@@ -1928,26 +1935,26 @@ int WayPointman::GetIconImageListIndex( const wxBitmap *pbm )
             int h1 = h;
             int w1 = w;
             if( h0 > h ) w1 = wxRound( (double) w0 * ( (double) h / (double) h0 ) );
-            
+
             else if( w0 > w ) h1 = wxRound( (double) h0 * ( (double) w / (double) w0 ) );
-            
+
             icon_larger =  pmi->iconImage.Rescale( w1, h1 );
             icon_larger = icon_larger.Resize( wxSize( w, h ), wxPoint( w/2 -w1/2, h/2-h1/2  ) );
         }
-        
+
         int index = pmarkicon_image_list->Add( wxBitmap(icon_larger));
-        
+
         // Create and replace "x-ed out" icon,
         // Being careful to preserve (some) transparency
-            
+
         icon_larger.ConvertAlphaToMask( 128 );
-            
+
         unsigned char r,g,b;
         icon_larger.GetOrFindMaskColour(&r, &g, &b);
         wxColour unused_color(r,g,b);
-            
+
         wxBitmap bmp0( icon_larger );
-            
+
         wxBitmap bmp(w, h, -1 );
         wxMemoryDC mdc( bmp );
         mdc.SetBackground( wxBrush( unused_color) );
@@ -1962,18 +1969,18 @@ int WayPointman::GetIconImageListIndex( const wxBitmap *pbm )
         mdc.DrawLine( xm-dp, ym-dp, xm+dp, ym+dp );
         mdc.DrawLine( xm-dp, ym+dp, xm+dp, ym-dp );
         mdc.SelectObject( wxNullBitmap );
-            
+
         wxMask *pmask = new wxMask(bmp, unused_color);
         bmp.SetMask( pmask );
-        
+
         pmarkicon_image_list->Add( bmp );
-        
+
         pmi->m_blistImageOK = true;
         pmi->listIndex = index;
-        
+
     }
 
-    return pmi->listIndex;     
+    return pmi->listIndex;
 
 }
 
@@ -1982,7 +1989,7 @@ int WayPointman::GetXIconImageListIndex( const wxBitmap *pbm )
 {
     unsigned int i;
     MarkIcon *pmi = NULL;
-    
+
     for( i = 0; i < m_pIconArray->GetCount(); i++ ) {
         pmi = (MarkIcon *) m_pIconArray->Item( i );
         if( pmi->piconBitmap == pbm ) break;
@@ -1994,7 +2001,7 @@ int WayPointman::GetXIconImageListIndex( const wxBitmap *pbm )
         int w0 = pmi->iconImage.GetWidth();
         int h = m_bitmapSizeForList;
         int w = m_bitmapSizeForList;
-        
+
         wxImage icon_larger;
         if( h0 <= h && w0 <= w ) {
            icon_larger =  pmi->iconImage.Resize( wxSize( w, h ), wxPoint( w/2 -w0/2, h/2-h0/2 ) );
@@ -2003,26 +2010,26 @@ int WayPointman::GetXIconImageListIndex( const wxBitmap *pbm )
             int h1 = h;
             int w1 = w;
             if( h0 > h ) w1 = wxRound( (double) w0 * ( (double) h / (double) h0 ) );
-            
+
             else if( w0 > w ) h1 = wxRound( (double) h0 * ( (double) w / (double) w0 ) );
-            
+
             icon_larger =  pmi->iconImage.Rescale( w1, h1 );
             icon_larger = icon_larger.Resize( wxSize( w, h ), wxPoint( w/2 -w1/2, h/2-h1/2  ) );
         }
-        
+
         int index = pmarkicon_image_list->Add( wxBitmap(icon_larger) );
-        
+
         // Create and replace "x-ed out" icon,
         // Being careful to preserve (some) transparency
-        
+
         icon_larger.ConvertAlphaToMask( 128 );
-        
+
         unsigned char r,g,b;
         icon_larger.GetOrFindMaskColour(&r, &g, &b);
         wxColour unused_color(r,g,b);
-        
+
         wxBitmap bmp0( icon_larger );
-        
+
         wxBitmap bmp(w, h, -1 );
         wxMemoryDC mdc( bmp );
         mdc.SetBackground( wxBrush( unused_color) );
@@ -2037,19 +2044,19 @@ int WayPointman::GetXIconImageListIndex( const wxBitmap *pbm )
         mdc.DrawLine( xm-dp, ym-dp, xm+dp, ym+dp );
         mdc.DrawLine( xm-dp, ym+dp, xm+dp, ym-dp );
         mdc.SelectObject( wxNullBitmap );
-        
+
         wxMask *pmask = new wxMask(bmp, unused_color);
         bmp.SetMask( pmask );
-        
+
         pmarkicon_image_list->Add( bmp );
-        
+
         pmi->m_blistImageOK = true;
         pmi->listIndex = index;
-        
+
     }
-    
+
     return pmi->listIndex+1;        // index of "X-ed out" icon in the image list
-    
+
 }
 
 //  Create the unique identifier
@@ -2174,7 +2181,7 @@ void WayPointman::DestroyWaypoint( RoutePoint *pRp, bool b_update_changeset )
 {
     if( ! b_update_changeset )
         pConfig->m_bSkipChangeSetUpdate = true;             // turn OFF change-set updating if requested
-        
+
     if( pRp ) {
         // Get a list of all routes containing this point
         // and remove the point from them all
@@ -2209,7 +2216,7 @@ void WayPointman::DestroyWaypoint( RoutePoint *pRp, bool b_update_changeset )
         // Now it is safe to delete the point
         pConfig->DeleteWayPoint( pRp );
         pConfig->m_bSkipChangeSetUpdate = false;
-        
+
         pSelect->DeleteSelectableRoutePoint( pRp );
 
         //    The RoutePoint might be currently in use as an anchor watch point

@@ -75,6 +75,7 @@ void DashboardInstrument_Clock::SetUtcTime( wxDateTime data )
         m_data = GetDisplayTime( data );
 }
 
+
 wxString DashboardInstrument_Clock::GetDisplayTime( wxDateTime UTCtime )
 {
     wxString result( _T( "---" ) );
