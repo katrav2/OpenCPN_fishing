@@ -761,6 +761,7 @@ IF(OCPN_USE_SVG)
     ENDIF(NOT WIN32)
 
     INCLUDE_DIRECTORIES(${CAIRO_INCLUDE_DIR})
+
     IF(APPLE)
       INCLUDE_DIRECTORIES(${CAIRO_INCLUDE_DIR}/..)
     ENDIF(APPLE)
@@ -998,8 +999,6 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/nmea0183)
 #      ENDIF (GPS_FOUND)
 #ENDIF (USE_GPSD)
 #ENDIF (NOT WIN32)
-
-
 
 
 SET(HDRS
@@ -1615,6 +1614,7 @@ SET(uiData
 	src/bitmaps/toolicons_journeyman.png
 	src/bitmaps/toolicons_journeyman_flat.png
 	src/bitmaps/toolicons_traditional.png
+	src/bitmaps/toolicons_marinegps.png
 	src/bitmaps/iconRMinus.png
         src/bitmaps/iconRPlus.png
         src/bitmaps/iconMinimum.png
